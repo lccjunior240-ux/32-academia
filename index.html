@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#ffffff" />
+  <meta name="theme-color" content="#0f1b2d" />
   <title>32 Academia</title>
   <style>
     :root {
@@ -13,7 +13,9 @@
       --ink: #111111;
       --muted: #52525b;
       --border: #111111;
-      --border-soft: #d4d4d8;
+      --navy: #0f1b2d;
+      --navy-2: #172842;
+      --copper: #c87d4b;
       --green: #16a34a;
       --green-dark: #15803d;
       --red: #dc2626;
@@ -24,11 +26,11 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
     body { background: var(--bg); color: var(--ink); min-height: 100vh; padding-bottom: 36px; }
 
-    /* CABEÇALHO FUNDO BRANCO COM BORDA PRETA */
+    /* CABEÇALHO AZUL-MARINHO COM EMBLEMA 32 ACADEMIA */
     header {
-      background: var(--surface);
+      background: linear-gradient(180deg, var(--navy-2) 0%, var(--navy) 100%);
       border-bottom: 2px solid var(--border);
-      padding: 14px 16px;
+      padding: 12px 16px;
       position: sticky;
       top: 0;
       z-index: 30;
@@ -36,25 +38,51 @@
       align-items: center;
       justify-content: space-between;
       gap: 10px;
+      color: #ffffff;
     }
 
-    .brand { display: flex; align-items: center; gap: 10px; }
+    .brand { display: flex; align-items: center; gap: 12px; }
     .brand-badge {
-      width: 42px;
-      height: 42px;
-      border-radius: 10px;
-      background: var(--surface);
-      border: 2px solid var(--border);
+      width: 52px;
+      height: 46px;
+      border-radius: 12px;
+      background: #0b1320;
+      border: 2px solid var(--copper);
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      font-weight: 900;
-      font-size: 16px;
-      color: var(--ink);
+      line-height: 1;
       flex-shrink: 0;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.35);
     }
-    .brand-title { font-size: 17px; font-weight: 900; color: var(--ink); }
-    .brand-sub { font-size: 11px; color: var(--muted); font-weight: 600; }
+    .brand-num {
+      font-size: 17px;
+      font-weight: 900;
+      font-style: italic;
+      color: #ffffff;
+      letter-spacing: -0.5px;
+    }
+    .brand-acad {
+      font-size: 8px;
+      font-weight: 800;
+      color: var(--copper);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      margin-top: 2px;
+    }
+    .brand-title { font-size: 17px; font-weight: 900; color: #ffffff; }
+    .brand-sub { font-size: 11px; color: #cbd5e1; font-weight: 600; }
+
+    .btn-header-light {
+      background: #ffffff;
+      color: #111111;
+      border: 2px solid #111111;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 800;
+      border-radius: 10px;
+    }
 
     .container { max-width: 720px; margin: 0 auto; padding: 16px; }
 
@@ -113,13 +141,13 @@
     button:hover { background: #f4f4f5; }
 
     .btn-primary {
-      background: var(--ink);
-      color: var(--surface);
+      background: var(--navy);
+      color: #ffffff;
       border: 2px solid var(--border);
       width: 100%;
       margin-top: 14px;
     }
-    .btn-primary:hover { background: #27272a; }
+    .btn-primary:hover { background: var(--navy-2); }
 
     .btn-secondary {
       background: var(--surface);
@@ -168,7 +196,7 @@
     .pill-red { background: var(--red-dark); }
     .pill-red:hover { background: var(--red); }
 
-    /* MENU DE BOTÕES: FUNDO BRANCO E BORDA PRETA EM CADA BOTÃO */
+    /* BOTÕES DO MENU: FUNDO BRANCO E BORDA PRETA */
     .menu-grid {
       display: grid;
       grid-template-columns: 1fr;
@@ -230,18 +258,31 @@
     .hidden { display: none !important; }
     .status-msg { margin-top: 10px; font-size: 13px; color: var(--red-dark); font-weight: 700; min-height: 18px; }
     .ok-msg { color: var(--green-dark); }
+    .diag-box {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: #f4f4f5;
+      border: 1px dashed #52525b;
+      font-size: 12px;
+      color: #27272a;
+      word-break: break-word;
+    }
   </style>
 </head>
 <body>
   <header>
     <div class="brand">
-      <div class="brand-badge">32</div>
+      <div class="brand-badge" aria-hidden="true">
+        <span class="brand-num">32</span>
+        <span class="brand-acad">academia</span>
+      </div>
       <div>
         <div class="brand-title" id="headerTitle">32 Academia</div>
         <div class="brand-sub" id="headerUser">Sistema de Gestão</div>
       </div>
     </div>
-    <button id="btnLogout" class="btn-close-x hidden" type="button">Sair da Conta</button>
+    <button id="btnLogout" class="btn-header-light hidden" type="button">Sair da Conta</button>
   </header>
 
   <main class="container">
@@ -265,6 +306,7 @@
       </form>
 
       <div id="authMsg" class="status-msg"></div>
+      <div id="authDiag" class="diag-box">Status: aguardando entrar ou criar conta.</div>
     </section>
 
     <!-- MENU PRINCIPAL COM OS BOTÕES -->
@@ -293,4 +335,93 @@
         </button>
 
         <button type="button" class="menu-btn" data-open="viewRelatorio">
-          <span
+          <span class="menu-btn-left">
+            <span class="menu-icon">📊</span>
+            <span>
+              <span class="menu-title">Relatório e Cobrança</span>
+              <span class="menu-sub">Quem pagou, quem não pagou e disparo no WhatsApp</span>
+            </span>
+          </span>
+          <span class="menu-arrow">›</span>
+        </button>
+
+        <button type="button" class="menu-btn" data-open="viewFestas">
+          <span class="menu-btn-left">
+            <span class="menu-icon">🎉</span>
+            <span>
+              <span class="menu-title">Festas, Aniversários e Eventos</span>
+              <span class="menu-sub">Lista separada de participantes (Pago ou Não Pago)</span>
+            </span>
+          </span>
+          <span class="menu-arrow">›</span>
+        </button>
+
+        <button type="button" class="menu-btn" data-open="viewGraduacao">
+          <span class="menu-btn-left">
+            <span class="menu-icon">🥋</span>
+            <span>
+              <span class="menu-title">Graduação</span>
+              <span class="menu-sub">Lista de quem vai graduar, faixa/grau e situação</span>
+            </span>
+          </span>
+          <span class="menu-arrow">›</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- 1. BOTÃO ADICIONAR ALUNO -->
+    <section id="viewAddAluno" class="card hidden">
+      <div class="section-header">
+        <h2>Ficha do Aluno</h2>
+        <button type="button" class="btn-close-x" data-back="menuSection">✕ Sair</button>
+      </div>
+
+      <label for="alunoNome">Nome Completo do Aluno *</label>
+      <input id="alunoNome" type="text" placeholder="Ex.: Junior Costa" />
+
+      <label for="alunoWhatsapp">WhatsApp (com DDD) *</label>
+      <input id="alunoWhatsapp" type="tel" placeholder="Ex.: 53999999999" />
+
+      <label for="alunoEndereco">Endereço</label>
+      <input id="alunoEndereco" type="text" placeholder="Rua, número, bairro" />
+
+      <div class="row-2">
+        <div>
+          <label for="alunoCep">CEP</label>
+          <input id="alunoCep" type="text" placeholder="96200-000" />
+        </div>
+        <div>
+          <label for="alunoPeso">Peso (kg) — Competição</label>
+          <input id="alunoPeso" type="text" placeholder="Ex.: 98,5 kg" />
+        </div>
+      </div>
+
+      <div class="row-2">
+        <div>
+          <label for="alunoModalidade">Modalidade</label>
+          <input id="alunoModalidade" type="text" placeholder="Ex.: Jiu-Jitsu / Muay Thai" />
+        </div>
+        <div>
+          <label for="alunoStatus">Situação Inicial</label>
+          <select id="alunoStatus">
+            <option value="nao_pago">Não Pago (Vermelho)</option>
+            <option value="pago">Pago (Verde)</option>
+          </select>
+        </div>
+      </div>
+
+      <button id="btnCriarAluno" class="btn-primary" type="button">Criar Aluno</button>
+      <div id="alunoMsg" class="status-msg"></div>
+
+      <button type="button" class="btn-exit-bottom" data-back="menuSection">Sair / Voltar aos Botões</button>
+    </section>
+
+    <!-- 2. BOTÃO TODOS OS ALUNOS -->
+    <section id="viewTodosAlunos" class="card hidden">
+      <div class="section-header">
+        <h2>Todos os Alunos (<span id="totalAlunosTitulo">0</span>)</h2>
+        <button type="button" class="btn-close-x" data-back="menuSection">✕ Sair</button>
+      </div>
+
+      <p class="desc" style="margin-bottom:10px;">
+        Toque no botão verde ou vermelho ao lado do nome para mudar entre <strong>Pago</strong> e 
