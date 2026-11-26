@@ -3,34 +3,35 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#18181b" />
-  <title>32 Academia — Login e WhatsApp</title>
+  <meta name="theme-color" content="#ffffff" />
+  <title>32 Academia</title>
   <style>
     :root {
-      --bg: #121316;
-      --card: #1d1f24;
-      --card-2: #262930;
-      --text: #f4f4f5;
-      --muted: #a1a1aa;
-      --primary: #e11d48;
-      --primary-hover: #be123c;
-      --green: #22c55e;
-      --green-bg: rgba(34, 197, 94, 0.14);
-      --red-bg: rgba(239, 68, 68, 0.16);
+      --bg: #f4f4f5;
+      --surface: #ffffff;
+      --surface-2: #fafafa;
+      --ink: #111111;
+      --muted: #52525b;
+      --border: #111111;
+      --border-soft: #d4d4d8;
+      --green: #16a34a;
+      --green-dark: #15803d;
+      --red: #dc2626;
+      --red-dark: #b91c1c;
       --whatsapp: #25d366;
-      --border: #383c47;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
-    body { background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 98px; }
+    body { background: var(--bg); color: var(--ink); min-height: 100vh; padding-bottom: 36px; }
 
+    /* CABEÇALHO FUNDO BRANCO COM BORDA PRETA */
     header {
-      background: #181a1f;
-      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      border-bottom: 2px solid var(--border);
       padding: 14px 16px;
       position: sticky;
       top: 0;
-      z-index: 20;
+      z-index: 30;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -39,133 +40,196 @@
 
     .brand { display: flex; align-items: center; gap: 10px; }
     .brand-badge {
-      width: 40px;
-      height: 40px;
+      width: 42px;
+      height: 42px;
       border-radius: 10px;
-      background: linear-gradient(135deg, #e11d48, #881337);
+      background: var(--surface);
+      border: 2px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 900;
       font-size: 16px;
-      color: #fff;
+      color: var(--ink);
       flex-shrink: 0;
     }
-    .brand-title { font-size: 17px; font-weight: 800; }
-    .brand-sub { font-size: 11px; color: var(--muted); }
+    .brand-title { font-size: 17px; font-weight: 900; color: var(--ink); }
+    .brand-sub { font-size: 11px; color: var(--muted); font-weight: 600; }
 
     .container { max-width: 720px; margin: 0 auto; padding: 16px; }
+
     .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 16px;
       padding: 16px;
       margin-bottom: 14px;
     }
 
-    h2 { font-size: 16px; margin-bottom: 8px; }
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    h2 { font-size: 17px; font-weight: 900; color: var(--ink); }
+    h3 { font-size: 15px; font-weight: 800; margin-bottom: 8px; color: var(--ink); }
     p.desc { font-size: 13px; color: var(--muted); line-height: 1.4; }
-    label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 4px; margin-top: 10px; }
+
+    label { display: block; font-size: 12px; color: var(--ink); margin-bottom: 4px; margin-top: 10px; font-weight: 700; }
     input, select, textarea {
       width: 100%;
-      padding: 11px 12px;
+      padding: 12px;
       border-radius: 10px;
-      border: 1px solid var(--border);
-      background: var(--card-2);
-      color: var(--text);
-      font-size: 14px;
+      border: 2px solid var(--border);
+      background: var(--surface);
+      color: var(--ink);
+      font-size: 15px;
     }
-    textarea { min-height: 74px; resize: vertical; }
+    textarea { min-height: 76px; resize: vertical; }
+
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
     button {
-      border: none;
-      border-radius: 10px;
-      padding: 11px 14px;
-      font-size: 14px;
-      font-weight: 700;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 13px 16px;
+      font-size: 15px;
+      font-weight: 800;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
+      gap: 8px;
+      background: var(--surface);
+      color: var(--ink);
+      transition: transform 0.05s, background 0.12s;
     }
-    .btn-primary { background: var(--primary); color: #fff; width: 100%; margin-top: 12px; }
-    .btn-primary:hover { background: var(--primary-hover); }
-    .btn-secondary { background: #3f3f46; color: #fff; }
-    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
-    .btn-sm { padding: 7px 10px; font-size: 12px; border-radius: 8px; }
-    .btn-wa { background: var(--whatsapp); color: #052e16; }
+    button:active { transform: scale(0.99); }
+    button:hover { background: #f4f4f5; }
+
+    .btn-primary {
+      background: var(--ink);
+      color: var(--surface);
+      border: 2px solid var(--border);
+      width: 100%;
+      margin-top: 14px;
+    }
+    .btn-primary:hover { background: #27272a; }
+
+    .btn-secondary {
+      background: var(--surface);
+      color: var(--ink);
+      border: 2px solid var(--border);
+      width: 100%;
+    }
+
+    .btn-close-x {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      color: var(--ink);
+      padding: 8px 12px;
+      font-size: 13px;
+      border-radius: 10px;
+    }
+
+    .btn-exit-bottom {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      color: var(--ink);
+      width: 100%;
+      margin-top: 14px;
+    }
+
+    .btn-sm { padding: 8px 11px; font-size: 12px; border-radius: 8px; }
+    .btn-wa {
+      background: var(--whatsapp);
+      color: #052e16;
+      border: 2px solid var(--border);
+      font-weight: 900;
+    }
+    .btn-wa:hover { background: #22c55e; }
+
+    .status-pill-btn {
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      color: #ffffff;
+      border: 2px solid var(--border);
+    }
+    .pill-green { background: var(--green-dark); }
+    .pill-green:hover { background: var(--green); }
+    .pill-red { background: var(--red-dark); }
+    .pill-red:hover { background: var(--red); }
+
+    /* MENU DE BOTÕES: FUNDO BRANCO E BORDA PRETA EM CADA BOTÃO */
+    .menu-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    .menu-btn {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      padding: 18px 16px;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--ink);
+      width: 100%;
+    }
+    .menu-btn:hover { background: #fafafa; box-shadow: 3px 3px 0 var(--border); }
+    .menu-btn-left { display: flex; align-items: center; gap: 14px; }
+    .menu-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .menu-title { font-size: 16px; font-weight: 900; display: block; color: var(--ink); }
+    .menu-sub { font-size: 12px; color: var(--muted); font-weight: 600; display: block; margin-top: 2px; }
+    .menu-arrow { font-size: 20px; color: var(--ink); font-weight: 900; }
+
+    .list-card {
+      background: var(--surface-2);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+    .list-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .list-title { font-size: 16px; font-weight: 900; color: var(--ink); }
+    .list-meta { font-size: 12px; color: var(--muted); margin-top: 4px; line-height: 1.45; }
+    .list-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+
+    .toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0 12px; }
+    .check-row { display: flex; align-items: center; gap: 10px; flex: 1; }
+    .big-check { width: 22px; height: 22px; accent-color: var(--ink); cursor: pointer; flex-shrink: 0; }
 
     .mt-2 { margin-top: 8px; }
     .hidden { display: none !important; }
-    .status-msg { margin-top: 10px; font-size: 13px; color: #fda4af; min-height: 18px; }
-    .ok-msg { color: #86efac; }
-
-    .diag-box {
-      margin-top: 12px;
-      padding: 10px 12px;
-      border-radius: 10px;
-      background: #14161a;
-      border: 1px dashed #52525b;
-      font-size: 12px;
-      color: #e4e4e7;
-      line-height: 1.45;
-      word-break: break-word;
-    }
-
-    .toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0 12px; }
-
-    .aluno-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      background: var(--card-2);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 12px;
-      margin-bottom: 8px;
-      flex-wrap: wrap;
-    }
-
-    .aluno-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 190px; }
-    .aluno-check { width: 20px; height: 20px; accent-color: var(--primary); cursor: pointer; flex-shrink: 0; }
-    .aluno-nome { font-weight: 700; font-size: 15px; }
-    .aluno-meta { font-size: 12px; color: var(--muted); }
-
-    .badge {
-      padding: 4px 9px;
-      border-radius: 999px;
-      font-size: 11px;
-      font-weight: 800;
-      text-transform: uppercase;
-      flex-shrink: 0;
-    }
-    .badge-pago { background: var(--green-bg); color: var(--green); border: 1px solid rgba(34, 197, 94, 0.35); }
-    .badge-pendente { background: var(--red-bg); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
-
-    .aluno-actions { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-
-    .bottom-bar {
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: #181a1f;
-      border-top: 1px solid var(--border);
-      padding: 10px 14px;
-      z-index: 25;
-    }
-    .bottom-bar-inner {
-      max-width: 720px;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-    }
-    .selected-count { font-size: 13px; font-weight: 700; }
-    .selected-sub { font-size: 11px; color: var(--muted); }
+    .status-msg { margin-top: 10px; font-size: 13px; color: var(--red-dark); font-weight: 700; min-height: 18px; }
+    .ok-msg { color: var(--green-dark); }
   </style>
 </head>
 <body>
@@ -174,412 +238,59 @@
       <div class="brand-badge">32</div>
       <div>
         <div class="brand-title" id="headerTitle">32 Academia</div>
-        <div class="brand-sub" id="headerUser">Gestão e Teste de WhatsApp</div>
+        <div class="brand-sub" id="headerUser">Sistema de Gestão</div>
       </div>
     </div>
-    <button id="btnLogout" class="btn-outline btn-sm hidden" type="button">Sair</button>
+    <button id="btnLogout" class="btn-close-x hidden" type="button">Sair da Conta</button>
   </header>
 
   <main class="container">
+    <!-- TELA DE LOGIN -->
     <section id="authSection" class="card">
       <h2>Entrar ou Criar Conta</h2>
-      <p class="desc">Acesse com seu e-mail e senha para testar o painel e o WhatsApp.</p>
+      <p class="desc">Entre com seu e-mail e senha salvos no navegador para abrir os botões do sistema.</p>
 
-      <label for="nomeAcademia">Nome da Academia</label>
-      <input id="nomeAcademia" type="text" placeholder="Ex.: Academia da Natália" />
+      <form id="authForm">
+        <label for="nomeAcademia">Nome da Academia (para conta nova)</label>
+        <input id="nomeAcademia" type="text" placeholder="Ex.: Academia da Natália" />
 
-      <label for="emailInput">E-mail</label>
-      <input id="emailInput" type="email" placeholder="seuemail@exemplo.com" autocomplete="email" />
+        <label for="emailInput">E-mail</label>
+        <input id="emailInput" name="email" type="email" placeholder="seuemail@exemplo.com" autocomplete="username" required />
 
-      <label for="senhaInput">Senha (mínimo 6 caracteres)</label>
-      <input id="senhaInput" type="password" placeholder="••••••" autocomplete="current-password" />
+        <label for="senhaInput">Senha (mínimo 6 caracteres)</label>
+        <input id="senhaInput" name="password" type="password" placeholder="••••••" autocomplete="current-password" required />
 
-      <button id="btnCriarConta" class="btn-primary" type="button">Criar Conta e Entrar</button>
-      <button id="btnLogin" class="btn-secondary mt-2" style="width:100%;" type="button">Já Tenho Conta — Entrar</button>
+        <button id="btnLogin" class="btn-primary" type="submit">Entrar</button>
+        <button id="btnCriarConta" class="btn-secondary mt-2" type="button">Criar Conta Nova</button>
+      </form>
 
       <div id="authMsg" class="status-msg"></div>
-      <div id="diagBox" class="diag-box">Diagnóstico: pronto para autenticar no projeto academia-1108d.</div>
     </section>
 
-    <section id="appSection" class="hidden">
-      <div class="card">
-        <h2>Mensagem para o WhatsApp</h2>
-        <label for="mensagemPadrao">Texto da Mensagem</label>
-        <textarea id="mensagemPadrao">Olá {nome}! Passando para avisar sobre os treinos e a situação na academia.</textarea>
-        <div id="conexaoBancoMsg" class="diag-box">Conexão: aguardando...</div>
-      </div>
+    <!-- MENU PRINCIPAL COM OS BOTÕES -->
+    <section id="menuSection" class="hidden">
+      <div class="menu-grid">
+        <button type="button" class="menu-btn" data-open="viewAddAluno">
+          <span class="menu-btn-left">
+            <span class="menu-icon">➕</span>
+            <span>
+              <span class="menu-title">Adicionar Aluno</span>
+              <span class="menu-sub">Ficha completa: nome, endereço, CEP, peso e WhatsApp</span>
+            </span>
+          </span>
+          <span class="menu-arrow">›</span>
+        </button>
 
-      <div class="card">
-        <h2>Adicionar Aluno</h2>
-        <label for="alunoNome">Nome do Aluno</label>
-        <input id="alunoNome" type="text" placeholder="Nome do aluno" />
+        <button type="button" class="menu-btn" data-open="viewTodosAlunos">
+          <span class="menu-btn-left">
+            <span class="menu-icon">👥</span>
+            <span>
+              <span class="menu-title">Todos os Alunos (<span id="countMenuAlunos">0</span>)</span>
+              <span class="menu-sub">Situação cadastral e botão Verde (Pago) / Vermelho (Não Pago)</span>
+            </span>
+          </span>
+          <span class="menu-arrow">›</span>
+        </button>
 
-        <label for="alunoWhatsapp">WhatsApp do Aluno (com DDD)</label>
-        <input id="alunoWhatsapp" type="tel" placeholder="Ex.: 53999999999" />
-
-        <label for="alunoModalidade">Modalidade / Turma</label>
-        <input id="alunoModalidade" type="text" placeholder="Ex.: Jiu-Jitsu / Muay Thai" />
-
-        <label for="alunoStatus">Situação</label>
-        <select id="alunoStatus">
-          <option value="pendente">Pendente (Vermelho)</option>
-          <option value="pago">Pago (Verde)</option>
-        </select>
-
-        <button id="btnAddAluno" class="btn-primary" type="button">Salvar Aluno</button>
-        <div id="alunoMsg" class="status-msg"></div>
-      </div>
-
-      <div class="card">
-        <h2>Alunos (<span id="totalAlunos">0</span>)</h2>
-
-        <div class="toolbar">
-          <button type="button" id="btnMarcarTodos" class="btn-outline btn-sm">Marcar Todos</button>
-          <button type="button" id="btnDesmarcarTodos" class="btn-outline btn-sm">Desmarcar</button>
-          <button type="button" id="btnSelecionarVermelhos" class="btn-secondary btn-sm">Selecionar Vermelhos</button>
-        </div>
-
-        <div id="listaAlunos"></div>
-      </div>
-    </section>
-  </main>
-
-  <div id="bottomWhatsappBar" class="bottom-bar hidden">
-    <div class="bottom-bar-inner">
-      <div>
-        <div class="selected-count"><span id="qtdSelecionados">0</span> selecionado(s)</div>
-        <div class="selected-sub">Copia a mensagem e abre o WhatsApp</div>
-      </div>
-      <button type="button" id="btnEnviarGeralWhatsapp" class="btn-wa">
-        Enviar WhatsApp
-      </button>
-    </div>
-  </div>
-
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import {
-      getAuth,
-      createUserWithEmailAndPassword,
-      signInWithEmailAndPassword,
-      signOut,
-      onAuthStateChanged
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import {
-      getDatabase,
-      ref,
-      set,
-      push,
-      update,
-      remove,
-      onValue
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyBz0Qaz1pmCoXf2NfvaeYfPmBk7d855M40",
-      authDomain: "academia-1108d.firebaseapp.com",
-      databaseURL: "https://academia-1108d-default-rtdb.firebaseio.com",
-      projectId: "academia-1108d",
-      storageBucket: "academia-1108d.firebasestorage.app",
-      messagingSenderId: "339069724218",
-      appId: "1:339069724218:web:10b6358f19c52479b0f703"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getDatabase(app);
-
-    const authSection = document.getElementById("authSection");
-    const appSection = document.getElementById("appSection");
-    const bottomWhatsappBar = document.getElementById("bottomWhatsappBar");
-    const btnLogout = document.getElementById("btnLogout");
-    const headerTitle = document.getElementById("headerTitle");
-    const headerUser = document.getElementById("headerUser");
-
-    const authMsg = document.getElementById("authMsg");
-    const diagBox = document.getElementById("diagBox");
-    const conexaoBancoMsg = document.getElementById("conexaoBancoMsg");
-    const alunoMsg = document.getElementById("alunoMsg");
-
-    const nomeAcademiaInput = document.getElementById("nomeAcademia");
-    const emailInput = document.getElementById("emailInput");
-    const senhaInput = document.getElementById("senhaInput");
-    const mensagemPadraoInput = document.getElementById("mensagemPadrao");
-
-    const alunoNomeInput = document.getElementById("alunoNome");
-    const alunoWhatsappInput = document.getElementById("alunoWhatsapp");
-    const alunoModalidadeInput = document.getElementById("alunoModalidade");
-    const alunoStatusSelect = document.getElementById("alunoStatus");
-
-    const listaAlunosEl = document.getElementById("listaAlunos");
-    const totalAlunosEl = document.getElementById("totalAlunos");
-    const qtdSelecionadosEl = document.getElementById("qtdSelecionados");
-
-    let currentUser = null;
-    let alunosCache = [];
-    let selectedIds = new Set();
-
-    function setDiag(texto) {
-      diagBox.textContent = "Diagnóstico: " + texto;
-    }
-
-    function formatError(err) {
-      const code = err?.code || "sem-codigo";
-      if (code.includes("auth/email-already-in-use")) return `E-mail já cadastrado (${code}). Use "Já Tenho Conta — Entrar".`;
-      if (code.includes("auth/invalid-email")) return `Formato de e-mail inválido (${code}).`;
-      if (code.includes("auth/weak-password")) return `Senha curta — use 6 ou mais caracteres (${code}).`;
-      if (code.includes("auth/invalid-credential") || code.includes("auth/user-not-found") || code.includes("auth/wrong-password")) {
-        return `E-mail ou senha não conferem (${code}).`;
-      }
-      if (code.includes("auth/unauthorized-domain")) {
-        return `Domínio ${window.location.hostname} não autorizado no Firebase Auth (${code}).`;
-      }
-      return `${err?.message || "Erro desconhecido"} (${code})`;
-    }
-
-    function cleanPhone(phone) {
-      let digits = (phone || "").replace(/\D/g, "");
-      if (digits.length === 10 || digits.length === 11) {
-        digits = "55" + digits;
-      }
-      return digits;
-    }
-
-    function updateSelectedCounter() {
-      qtdSelecionadosEl.textContent = String(selectedIds.size);
-    }
-
-    function buildMessageForAluno(aluno) {
-      const template = mensagemPadraoInput.value || "Olá {nome}! Mensagem da academia.";
-      return template.replaceAll("{nome}", aluno.nome || "Aluno");
-    }
-
-    function renderAlunos() {
-      totalAlunosEl.textContent = String(alunosCache.length);
-      listaAlunosEl.innerHTML = "";
-
-      if (!alunosCache.length) {
-        listaAlunosEl.innerHTML = `<p style="font-size:13px; color:var(--muted);">Nenhum aluno cadastrado ainda.</p>`;
-        updateSelectedCounter();
-        return;
-      }
-
-      alunosCache.forEach((aluno) => {
-        const isPago = aluno.status === "pago";
-        const isChecked = selectedIds.has(aluno.id);
-
-        const item = document.createElement("div");
-        item.className = "aluno-item";
-
-        const left = document.createElement("div");
-        left.className = "aluno-left";
-
-        const checkbox = document.createElement("input");
-        checkbox.type = "checkbox";
-        checkbox.className = "aluno-check";
-        checkbox.checked = isChecked;
-        checkbox.addEventListener("change", () => {
-          if (checkbox.checked) selectedIds.add(aluno.id);
-          else selectedIds.delete(aluno.id);
-          updateSelectedCounter();
-        });
-
-        const info = document.createElement("div");
-        info.innerHTML = `
-          <div class="aluno-nome">${aluno.nome}</div>
-          <div class="aluno-meta">${aluno.modalidade || "Sem turma"} • WA: ${aluno.whatsapp || "Sem número"}</div>
-        `;
-
-        left.appendChild(checkbox);
-        left.appendChild(info);
-
-        const badge = document.createElement("span");
-        badge.className = `badge ${isPago ? "badge-pago" : "badge-pendente"}`;
-        badge.textContent = isPago ? "Pago" : "Pendente";
-
-        const actions = document.createElement("div");
-        actions.className = "aluno-actions";
-
-        const btnToggle = document.createElement("button");
-        btnToggle.type = "button";
-        btnToggle.className = "btn-outline btn-sm";
-        btnToggle.textContent = isPago ? "Marcar Pendente" : "Marcar Pago";
-        btnToggle.addEventListener("click", async () => {
-          if (!currentUser) return;
-          const nextStatus = isPago ? "pendente" : "pago";
-          await update(ref(db, `academias/${currentUser.uid}/alunos/${aluno.id}`), { status: nextStatus });
-        });
-
-        const btnWaSingle = document.createElement("button");
-        btnWaSingle.type = "button";
-        btnWaSingle.className = "btn-wa btn-sm";
-        btnWaSingle.textContent = "WhatsApp";
-        btnWaSingle.addEventListener("click", () => {
-          const phone = cleanPhone(aluno.whatsapp);
-          const msg = encodeURIComponent(buildMessageForAluno(aluno));
-          const url = phone ? `https://wa.me/${phone}?text=${msg}` : `https://wa.me/?text=${msg}`;
-          window.open(url, "_blank", "noopener");
-        });
-
-        const btnDel = document.createElement("button");
-        btnDel.type = "button";
-        btnDel.className = "btn-outline btn-sm";
-        btnDel.textContent = "Excluir";
-        btnDel.addEventListener("click", async () => {
-          if (!currentUser) return;
-          selectedIds.delete(aluno.id);
-          await remove(ref(db, `academias/${currentUser.uid}/alunos/${aluno.id}`));
-        });
-
-        actions.appendChild(btnToggle);
-        actions.appendChild(btnWaSingle);
-        actions.appendChild(btnDel);
-
-        item.appendChild(left);
-        item.appendChild(badge);
-        item.appendChild(actions);
-        listaAlunosEl.appendChild(item);
-      });
-
-      updateSelectedCounter();
-    }
-
-    document.getElementById("btnCriarConta").addEventListener("click", async () => {
-      authMsg.textContent = "";
-      const nomeAcad = nomeAcademiaInput.value.trim() || "32 Academia";
-      const email = emailInput.value.trim();
-      const senha = senhaInput.value;
-      setDiag(`Criando conta para "${email}"...`);
-
-      try {
-        const cred = await createUserWithEmailAndPassword(auth, email, senha);
-        await set(ref(db, `academias/${cred.user.uid}/perfil`), {
-          nomeAcademia: nomeAcad,
-          criadoEm: Date.now()
-        });
-        setDiag(`Conta criada com sucesso! UID: ${cred.user.uid}`);
-      } catch (err) {
-        const msg = formatError(err);
-        authMsg.textContent = msg;
-        setDiag(`Falha ao criar conta: ${msg}`);
-      }
-    });
-
-    document.getElementById("btnLogin").addEventListener("click", async () => {
-      authMsg.textContent = "";
-      const email = emailInput.value.trim();
-      const senha = senhaInput.value;
-      setDiag(`Entrando com "${email}"...`);
-
-      try {
-        const cred = await signInWithEmailAndPassword(auth, email, senha);
-        setDiag(`Login aprovado! UID: ${cred.user.uid}`);
-      } catch (err) {
-        const msg = formatError(err);
-        authMsg.textContent = msg;
-        setDiag(`Falha no login: ${msg}`);
-      }
-    });
-
-    btnLogout.addEventListener("click", async () => {
-      selectedIds.clear();
-      setDiag("Sessão encerrada.");
-      await signOut(auth);
-    });
-
-    document.getElementById("btnAddAluno").addEventListener("click", async () => {
-      if (!currentUser) return;
-      alunoMsg.textContent = "";
-      const nome = alunoNomeInput.value.trim();
-      const whatsapp = alunoWhatsappInput.value.trim();
-      const modalidade = alunoModalidadeInput.value.trim();
-      const status = alunoStatusSelect.value;
-
-      if (!nome) {
-        alunoMsg.textContent = "Digite o nome do aluno.";
-        return;
-      }
-
-      const newRef = push(ref(db, `academias/${currentUser.uid}/alunos`));
-      await set(newRef, { nome, whatsapp, modalidade, status, criadoEm: Date.now() });
-
-      alunoNomeInput.value = "";
-      alunoWhatsappInput.value = "";
-      alunoModalidadeInput.value = "";
-      alunoMsg.className = "status-msg ok-msg";
-      alunoMsg.textContent = "Aluno salvo!";
-      setTimeout(() => { alunoMsg.textContent = ""; }, 2000);
-    });
-
-    document.getElementById("btnMarcarTodos").addEventListener("click", () => {
-      selectedIds = new Set(alunosCache.map((a) => a.id));
-      renderAlunos();
-    });
-
-    document.getElementById("btnDesmarcarTodos").addEventListener("click", () => {
-      selectedIds.clear();
-      renderAlunos();
-    });
-
-    document.getElementById("btnSelecionarVermelhos").addEventListener("click", () => {
-      selectedIds = new Set(alunosCache.filter((a) => a.status !== "pago").map((a) => a.id));
-      renderAlunos();
-    });
-
-    document.getElementById("btnEnviarGeralWhatsapp").addEventListener("click", async () => {
-      const escolhidos = alunosCache.filter((a) => selectedIds.has(a.id));
-      if (!escolhidos.length) {
-        alert("Selecione pelo menos um aluno para testar a mensagem.");
-        return;
-      }
-
-      const baseMsg = (mensagemPadraoInput.value || "Mensagem da academia.").trim();
-      const listaNomes = escolhidos
-        .map((a) => `• ${a.nome} (${a.status === "pago" ? "Pago" : "Pendente"})`)
-        .join("\n");
-
-      const textoFinal = `${baseMsg}\n\nAlunos marcados:\n${listaNomes}`;
-
-      try {
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          await navigator.clipboard.writeText(textoFinal);
-        }
-      } catch (_) {}
-
-      window.open(`https://wa.me/?text=${encodeURIComponent(textoFinal)}`, "_blank", "noopener");
-    });
-
-    onAuthStateChanged(auth, (user) => {
-      currentUser = user;
-      if (user) {
-        authSection.classList.add("hidden");
-        appSection.classList.remove("hidden");
-        bottomWhatsappBar.classList.remove("hidden");
-        btnLogout.classList.remove("hidden");
-        headerUser.textContent = user.email || "Conta conectada";
-        conexaoBancoMsg.textContent = `Conectado como ${user.email} • Caminho: academias/${user.uid}/alunos`;
-
-        onValue(ref(db, `academias/${user.uid}/perfil`), (snap) => {
-          const perfil = snap.val();
-          if (perfil?.nomeAcademia) headerTitle.textContent = perfil.nomeAcademia;
-        });
-
-        onValue(ref(db, `academias/${user.uid}/alunos`), (snap) => {
-          const data = snap.val() || {};
-          alunosCache = Object.entries(data).map(([id, val]) => ({ id, ...val }));
-          renderAlunos();
-        }, (err) => {
-          conexaoBancoMsg.textContent = `Erro ao ler banco: ${err.message}`;
-        });
-      } else {
-        authSection.classList.remove("hidden");
-        appSection.classList.add("hidden");
-        bottomWhatsappBar.classList.add("hidden");
-        btnLogout.classList.add("hidden");
-        headerTitle.textContent = "32 Academia";
-        headerUser.textContent = "Gestão e Teste de WhatsApp";
-      }
-    });
-  </script>
-</body>
-</html>
+        <button type="button" class="menu-btn" data-open="viewRelatorio">
+          <span
