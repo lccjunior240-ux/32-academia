@@ -3,33 +3,30 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#121212" />
-  <title>32 Academia — Gestão de Alunos</title>
+  <meta name="theme-color" content="#18181b" />
+  <title>32 Academia — Login e WhatsApp</title>
   <style>
     :root {
-      --bg: #121212;
-      --surface: #1e1e1e;
-      --surface-2: #262626;
-      --input-bg: #161616;
-      --text: #f5f5f5;
-      --muted: #a3a3a3;
-      --primary: #dc2626;
-      --primary-hover: #b91c1c;
+      --bg: #121316;
+      --card: #1d1f24;
+      --card-2: #262930;
+      --text: #f4f4f5;
+      --muted: #a1a1aa;
+      --primary: #e11d48;
+      --primary-hover: #be123c;
       --green: #22c55e;
-      --green-bg: rgba(34, 197, 94, 0.16);
-      --red: #f87171;
-      --red-bg: rgba(220, 38, 38, 0.18);
+      --green-bg: rgba(34, 197, 94, 0.14);
+      --red-bg: rgba(239, 68, 68, 0.16);
       --whatsapp: #25d366;
-      --border: #333333;
-      --border-light: #404040;
+      --border: #383c47;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
-    body { background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 100px; }
+    body { background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 98px; }
 
     header {
-      background: #0a0a0a;
-      border-bottom: 2px solid var(--primary);
+      background: #181a1f;
+      border-bottom: 1px solid var(--border);
       padding: 14px 16px;
       position: sticky;
       top: 0;
@@ -42,61 +39,48 @@
 
     .brand { display: flex; align-items: center; gap: 10px; }
     .brand-badge {
-      width: 42px;
-      height: 42px;
+      width: 40px;
+      height: 40px;
       border-radius: 10px;
-      background: linear-gradient(135deg, #ef4444, #991b1b);
+      background: linear-gradient(135deg, #e11d48, #881337);
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 900;
-      font-size: 17px;
+      font-size: 16px;
       color: #fff;
-      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
       flex-shrink: 0;
     }
-    .brand-title { font-size: 17px; font-weight: 800; letter-spacing: 0.3px; color: #fff; }
+    .brand-title { font-size: 17px; font-weight: 800; }
     .brand-sub { font-size: 11px; color: var(--muted); }
 
     .container { max-width: 720px; margin: 0 auto; padding: 16px; }
     .card {
-      background: var(--surface);
+      background: var(--card);
       border: 1px solid var(--border);
       border-radius: 14px;
       padding: 16px;
-      margin-bottom: 16px;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+      margin-bottom: 14px;
     }
 
-    h2 {
-      font-size: 16px;
-      margin-bottom: 10px;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 5px; margin-top: 11px; font-weight: 600; }
+    h2 { font-size: 16px; margin-bottom: 8px; }
+    p.desc { font-size: 13px; color: var(--muted); line-height: 1.4; }
+    label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 4px; margin-top: 10px; }
     input, select, textarea {
       width: 100%;
-      padding: 12px;
+      padding: 11px 12px;
       border-radius: 10px;
-      border: 1px solid var(--border-light);
-      background: var(--input-bg);
+      border: 1px solid var(--border);
+      background: var(--card-2);
       color: var(--text);
       font-size: 14px;
     }
-    input:focus, select:focus, textarea:focus {
-      outline: none;
-      border-color: var(--primary);
-    }
-    textarea { min-height: 80px; resize: vertical; }
+    textarea { min-height: 74px; resize: vertical; }
 
     button {
       border: none;
       border-radius: 10px;
-      padding: 12px 14px;
+      padding: 11px 14px;
       font-size: 14px;
       font-weight: 700;
       cursor: pointer;
@@ -104,96 +88,71 @@
       align-items: center;
       justify-content: center;
       gap: 6px;
-      transition: opacity 0.15s ease;
     }
-    button:active { opacity: 0.85; }
-    .btn-primary { background: var(--primary); color: #fff; width: 100%; margin-top: 14px; }
+    .btn-primary { background: var(--primary); color: #fff; width: 100%; margin-top: 12px; }
     .btn-primary:hover { background: var(--primary-hover); }
-    .btn-secondary { background: var(--surface-2); border: 1px solid var(--border-light); color: #fff; }
-    .btn-outline { background: transparent; border: 1px solid var(--border-light); color: var(--text); }
-    .btn-danger-outline { background: transparent; border: 1px solid rgba(220, 38, 38, 0.5); color: #fca5a5; }
-    .btn-sm { padding: 8px 10px; font-size: 12px; border-radius: 8px; }
-    .btn-wa { background: var(--whatsapp); color: #052e16; font-weight: 800; }
+    .btn-secondary { background: #3f3f46; color: #fff; }
+    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+    .btn-sm { padding: 7px 10px; font-size: 12px; border-radius: 8px; }
+    .btn-wa { background: var(--whatsapp); color: #052e16; }
 
     .mt-2 { margin-top: 8px; }
     .hidden { display: none !important; }
-    .status-msg { margin-top: 10px; font-size: 13px; color: #fca5a5; min-height: 18px; }
+    .status-msg { margin-top: 10px; font-size: 13px; color: #fda4af; min-height: 18px; }
     .ok-msg { color: #86efac; }
 
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin-bottom: 14px;
-    }
-    .stat-box {
-      background: var(--surface-2);
-      border: 1px solid var(--border);
+    .diag-box {
+      margin-top: 12px;
+      padding: 10px 12px;
       border-radius: 10px;
-      padding: 10px;
-      text-align: center;
+      background: #14161a;
+      border: 1px dashed #52525b;
+      font-size: 12px;
+      color: #e4e4e7;
+      line-height: 1.45;
+      word-break: break-word;
     }
-    .stat-num { font-size: 18px; font-weight: 800; }
-    .stat-label { font-size: 11px; color: var(--muted); margin-top: 2px; }
 
-    .toolbar {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin: 10px 0 14px;
-    }
+    .toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0 12px; }
 
     .aluno-item {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 12px;
-      margin-bottom: 10px;
-    }
-
-    .aluno-top {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 10px;
+      background: var(--card-2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
     }
 
-    .aluno-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+    .aluno-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 190px; }
     .aluno-check { width: 20px; height: 20px; accent-color: var(--primary); cursor: pointer; flex-shrink: 0; }
-    .aluno-info { min-width: 0; }
-    .aluno-nome { font-weight: 700; font-size: 15px; color: #fff; }
-    .aluno-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .aluno-nome { font-weight: 700; font-size: 15px; }
+    .aluno-meta { font-size: 12px; color: var(--muted); }
 
     .badge {
-      padding: 4px 10px;
+      padding: 4px 9px;
       border-radius: 999px;
       font-size: 11px;
       font-weight: 800;
       text-transform: uppercase;
       flex-shrink: 0;
     }
-    .badge-pago { background: var(--green-bg); color: var(--green); border: 1px solid rgba(34, 197, 94, 0.4); }
-    .badge-pendente { background: var(--red-bg); color: var(--red); border: 1px solid rgba(220, 38, 38, 0.45); }
+    .badge-pago { background: var(--green-bg); color: var(--green); border: 1px solid rgba(34, 197, 94, 0.35); }
+    .badge-pendente { background: var(--red-bg); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
 
-    .aluno-actions {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex-wrap: wrap;
-      border-top: 1px solid var(--border);
-      padding-top: 8px;
-    }
+    .aluno-actions { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 
     .bottom-bar {
       position: fixed;
       left: 0;
       right: 0;
       bottom: 0;
-      background: #0a0a0a;
-      border-top: 2px solid var(--border);
+      background: #181a1f;
+      border-top: 1px solid var(--border);
       padding: 10px 14px;
       z-index: 25;
     }
@@ -205,7 +164,7 @@
       justify-content: space-between;
       gap: 10px;
     }
-    .selected-count { font-size: 13px; font-weight: 800; color: #fff; }
+    .selected-count { font-size: 13px; font-weight: 700; }
     .selected-sub { font-size: 11px; color: var(--muted); }
   </style>
 </head>
@@ -215,22 +174,53 @@
       <div class="brand-badge">32</div>
       <div>
         <div class="brand-title" id="headerTitle">32 Academia</div>
-        <div class="brand-sub" id="headerUser">Gestão de Alunos e Cobranças</div>
+        <div class="brand-sub" id="headerUser">Gestão e Teste de WhatsApp</div>
       </div>
     </div>
-    <button id="btnLogout" class="btn-outline btn-sm hidden">Sair</button>
+    <div style="display:flex; gap:6px;">
+      <button id="btnTrocarConfig" class="btn-outline btn-sm hidden" type="button">Config Firebase</button>
+      <button id="btnLogout" class="btn-outline btn-sm hidden" type="button">Sair</button>
+    </div>
   </header>
 
   <main class="container">
-    <!-- TELA DE LOGIN / CADASTRO -->
-    <section id="authSection" class="card">
-      <h2>Entrar ou Criar Conta na 32 Academia</h2>
-      <p style="font-size:13px; color:var(--muted);">
-        Cada academia tem seu próprio espaço isolado para gerenciar alunos e cobranças.
+    <!-- CONFIGURAÇÃO DO FIREBASE (SEM CHAVES DE TESTE FIXAS) -->
+    <section id="setupSection" class="card">
+      <h2>Conectar ao Seu Firebase (Sem Chaves de Teste)</h2>
+      <p class="desc">
+        Cole aqui os dados do seu projeto no Firebase (você pode colar o bloco inteiro do <code>firebaseConfig</code> ou preencher os campos). Fica salvo neste navegador.
       </p>
 
+      <label for="rawConfigInput">Colar bloco firebaseConfig (opcional — preenche os campos abaixo)</label>
+      <textarea id="rawConfigInput" placeholder='Ex.: apiKey: "...", authDomain: "...", databaseURL: "...", projectId: "...", appId: "..."'></textarea>
+      <button id="btnExtrairConfig" class="btn-outline btn-sm mt-2" type="button">Preencher Campos do Texto Colado</button>
+
+      <label for="cfgApiKey">apiKey</label>
+      <input id="cfgApiKey" type="text" placeholder="Sua apiKey do Firebase" />
+
+      <label for="cfgAuthDomain">authDomain</label>
+      <input id="cfgAuthDomain" type="text" placeholder="Ex.: seu-projeto.firebaseapp.com" />
+
+      <label for="cfgDatabaseURL">databaseURL (Realtime Database)</label>
+      <input id="cfgDatabaseURL" type="text" placeholder="Ex.: https://seu-projeto-default-rtdb.firebaseio.com" />
+
+      <label for="cfgProjectId">projectId</label>
+      <input id="cfgProjectId" type="text" placeholder="Ex.: seu-projeto" />
+
+      <label for="cfgAppId">appId</label>
+      <input id="cfgAppId" type="text" placeholder="Ex.: 1:123456:web:abcdef" />
+
+      <button id="btnSalvarConfig" class="btn-primary" type="button">Salvar Conexão e Ir para Login</button>
+      <div id="setupMsg" class="status-msg"></div>
+    </section>
+
+    <!-- TELA DE LOGIN / CADASTRO -->
+    <section id="authSection" class="card hidden">
+      <h2>Entrar ou Criar Conta</h2>
+      <p class="desc">Acesse com seu e-mail e senha cadastrados no Firebase Authentication.</p>
+
       <label for="nomeAcademia">Nome da Academia</label>
-      <input id="nomeAcademia" type="text" placeholder="Ex.: Academia Natália / 32 Academia" />
+      <input id="nomeAcademia" type="text" placeholder="Ex.: Academia da Natália" />
 
       <label for="emailInput">E-mail</label>
       <input id="emailInput" type="email" placeholder="seuemail@exemplo.com" autocomplete="email" />
@@ -238,38 +228,138 @@
       <label for="senhaInput">Senha (mínimo 6 caracteres)</label>
       <input id="senhaInput" type="password" placeholder="••••••" autocomplete="current-password" />
 
-      <button id="btnCriarConta" class="btn-primary">Criar Minha Conta e Entrar</button>
-      <button id="btnLogin" class="btn-secondary mt-2" style="width:100%;">Já Tenho Conta — Entrar</button>
+      <button id="btnCriarConta" class="btn-primary" type="button">Criar Conta e Entrar</button>
+      <button id="btnLogin" class="btn-secondary mt-2" style="width:100%;" type="button">Já Tenho Conta — Entrar</button>
 
       <div id="authMsg" class="status-msg"></div>
+      <div id="diagBox" class="diag-box">Diagnóstico: pronto para autenticar.</div>
     </section>
 
     <!-- PAINEL PRINCIPAL -->
     <section id="appSection" class="hidden">
-      <!-- RESUMO RÁPIDO -->
-      <div class="stats-grid">
-        <div class="stat-box">
-          <div class="stat-num" id="statTotal">0</div>
-          <div class="stat-label">Total</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-num" style="color:var(--green);" id="statPagos">0</div>
-          <div class="stat-label">Pagos</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-num" style="color:var(--red);" id="statPendentes">0</div>
-          <div class="stat-label">Pendentes</div>
-        </div>
+      <div class="card">
+        <h2>Mensagem para o WhatsApp</h2>
+        <label for="mensagemPadrao">Texto da Mensagem</label>
+        <textarea id="mensagemPadrao">Olá {nome}! Passando para avisar sobre os treinos e a situação da mensalidade na academia.</textarea>
+        <div id="conexaoBancoMsg" class="diag-box">Conexão: aguardando...</div>
       </div>
 
-      <!-- DADOS DE RECEBIMENTO -->
       <div class="card">
-        <h2>Recebimento e Mensagem</h2>
-        <label for="recebedorNome">Recebedor</label>
-        <input id="recebedorNome" type="text" value="Luíz Carlos Costa Júnior" />
+        <h2>Adicionar Aluno</h2>
+        <label for="alunoNome">Nome do Aluno</label>
+        <input id="alunoNome" type="text" placeholder="Nome do aluno" />
 
-        <label for="chavePixDados">Chave PIX / Dados para Pagamento</label>
-        <input id="chavePixDados" type="text" placeholder="Ex.: Chave PIX ou instruções de pagamento" />
+        <label for="alunoWhatsapp">WhatsApp do Aluno (com DDD)</label>
+        <input id="alunoWhatsapp" type="tel" placeholder="Ex.: 53999999999" />
 
-        <label for="mensagemPadrao">Mensagem de Cobrança / Aviso</label>
-        <textarea id="mensagemPadrao">Olá! Passando para lembrar da mensalidade da academia. Pagamento em nome de {
+        <label for="alunoModalidade">Modalidade / Turma</label>
+        <input id="alunoModalidade" type="text" placeholder="Ex.: Jiu-Jitsu / Muay Thai" />
+
+        <label for="alunoStatus">Situação</label>
+        <select id="alunoStatus">
+          <option value="pendente">Pendente (Vermelho)</option>
+          <option value="pago">Pago (Verde)</option>
+        </select>
+
+        <button id="btnAddAluno" class="btn-primary" type="button">Salvar Aluno</button>
+        <div id="alunoMsg" class="status-msg"></div>
+      </div>
+
+      <div class="card">
+        <h2>Alunos (<span id="totalAlunos">0</span>)</h2>
+
+        <div class="toolbar">
+          <button type="button" id="btnMarcarTodos" class="btn-outline btn-sm">Marcar Todos</button>
+          <button type="button" id="btnDesmarcarTodos" class="btn-outline btn-sm">Desmarcar</button>
+          <button type="button" id="btnSelecionarVermelhos" class="btn-secondary btn-sm">Selecionar Vermelhos</button>
+        </div>
+
+        <div id="listaAlunos"></div>
+      </div>
+    </section>
+  </main>
+
+  <div id="bottomWhatsappBar" class="bottom-bar hidden">
+    <div class="bottom-bar-inner">
+      <div>
+        <div class="selected-count"><span id="qtdSelecionados">0</span> selecionado(s)</div>
+        <div class="selected-sub">Copia a mensagem e abre o WhatsApp</div>
+      </div>
+      <button type="button" id="btnEnviarGeralWhatsapp" class="btn-wa">
+        Enviar WhatsApp
+      </button>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp, deleteApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getAuth,
+      createUserWithEmailAndPassword,
+      signInWithEmailAndPassword,
+      signOut,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import {
+      getDatabase,
+      ref,
+      set,
+      push,
+      update,
+      remove,
+      onValue
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+    const STORAGE_KEY = "academia32_firebase_config_v1";
+
+    const setupSection = document.getElementById("setupSection");
+    const authSection = document.getElementById("authSection");
+    const appSection = document.getElementById("appSection");
+    const bottomWhatsappBar = document.getElementById("bottomWhatsappBar");
+    const btnTrocarConfig = document.getElementById("btnTrocarConfig");
+    const btnLogout = document.getElementById("btnLogout");
+    const headerTitle = document.getElementById("headerTitle");
+    const headerUser = document.getElementById("headerUser");
+
+    const rawConfigInput = document.getElementById("rawConfigInput");
+    const cfgApiKey = document.getElementById("cfgApiKey");
+    const cfgAuthDomain = document.getElementById("cfgAuthDomain");
+    const cfgDatabaseURL = document.getElementById("cfgDatabaseURL");
+    const cfgProjectId = document.getElementById("cfgProjectId");
+    const cfgAppId = document.getElementById("cfgAppId");
+    const setupMsg = document.getElementById("setupMsg");
+
+    const authMsg = document.getElementById("authMsg");
+    const diagBox = document.getElementById("diagBox");
+    const conexaoBancoMsg = document.getElementById("conexaoBancoMsg");
+    const alunoMsg = document.getElementById("alunoMsg");
+
+    const nomeAcademiaInput = document.getElementById("nomeAcademia");
+    const emailInput = document.getElementById("emailInput");
+    const senhaInput = document.getElementById("senhaInput");
+    const mensagemPadraoInput = document.getElementById("mensagemPadrao");
+
+    const alunoNomeInput = document.getElementById("alunoNome");
+    const alunoWhatsappInput = document.getElementById("alunoWhatsapp");
+    const alunoModalidadeInput = document.getElementById("alunoModalidade");
+    const alunoStatusSelect = document.getElementById("alunoStatus");
+
+    const listaAlunosEl = document.getElementById("listaAlunos");
+    const totalAlunosEl = document.getElementById("totalAlunos");
+    const qtdSelecionadosEl = document.getElementById("qtdSelecionados");
+
+    let auth = null;
+    let db = null;
+    let currentUser = null;
+    let alunosCache = [];
+    let selectedIds = new Set();
+    let unsubPerfil = null;
+    let unsubAlunos = null;
+
+    function setDiag(texto) {
+      diagBox.textContent = "Diagnóstico: " + texto;
+    }
+
+    function formatError(err) {
+      const code = err?.code || "sem-codigo";
+      if (code.includes("
