@@ -1,249 +1,79 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>32 Academia</title>
+  <meta name="theme-color" content="#111827" />
+  <title>32 Academia — Gestão de Alunos</title>
   <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: system-ui, -apple-system, sans-serif;
-      background: #111315;
-      color: #f3f4f6;
-      padding: 16px;
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --card-2: #0b1220;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --primary: #ef4444;
+      --primary-hover: #dc2626;
+      --green: #22c55e;
+      --green-bg: rgba(34, 197, 94, 0.14);
+      --red-bg: rgba(239, 68, 68, 0.16);
+      --whatsapp: #25d366;
+      --border: #334155;
+      --accent: #38bdf8;
     }
-    .container {
-      max-width: 520px;
-      margin: 0 auto;
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+    body { background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 96px; }
+
+    header {
+      background: var(--card-2);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 16px;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
     }
+
+    .brand { display: flex; align-items: center; gap: 10px; }
+    .brand-badge {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #ef4444, #991b1b);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 16px;
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.35);
+      flex-shrink: 0;
+    }
+    .brand-title { font-size: 17px; font-weight: 800; letter-spacing: 0.3px; }
+    .brand-sub { font-size: 11px; color: var(--muted); }
+
+    .container { max-width: 720px; margin: 0 auto; padding: 16px; }
     .card {
-      background: #1b1f24;
-      border: 1px solid #2c323b;
-      border-radius: 12px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
       padding: 16px;
       margin-bottom: 14px;
     }
-    h1, h2 { margin-top: 0; }
-    input, select, button {
+
+    h2 { font-size: 16px; margin-bottom: 10px; }
+    label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 4px; margin-top: 10px; }
+    input, select, textarea {
       width: 100%;
-      padding: 12px;
-      margin-top: 8px;
-      border-radius: 8px;
-      border: 1px solid #374151;
-      font-size: 16px;
-    }
-    input, select {
-      background: #111315;
-      color: #f9fafb;
-    }
-    button {
-      background: #2563eb;
-      color: #ffffff;
-      border: none;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    button.secundario {
-      background: #374151;
-    }
-    .aluno-item {
-      padding: 10px 0;
-      border-bottom: 1px solid #2c323b;
-    }
-    .aluno-item:last-child { border-bottom: none; }
-    .status {
-      margin-top: 10px;
-      font-size: 14px;
-      color: #93c5fd;
-      min-height: 20px;
-    }
-    .topo {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-    }
-    .topo button {
-      width: auto;
-      margin-top: 0;
-      padding: 8px 14px;
+      padding: 11px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--card-2);
+      color: var(--text);
       font-size: 14px;
     }
-    .oculto { display: none; }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="card topo">
-      <div>
-        <h1>32 Academia</h1>
-        <small id="usuario-atual">Não autenticado</small>
-      </div>
-      <button id="btn-sair" class="secundario oculto" type="button">Sair</button>
-    </div>
-
-    <!-- Ecrã de Login / Cadastro -->
-    <div id="tela-auth" class="card">
-      <h2>Acesso ao sistema</h2>
-      <input id="email" type="email" placeholder="E-mail" autocomplete="email" />
-      <input id="senha" type="password" placeholder="Senha (mín. 6 caracteres)" autocomplete="current-password" />
-      <button id="btn-entrar" type="button">Entrar</button>
-      <button id="btn-cadastrar" class="secundario" type="button">Criar conta</button>
-      <div id="msg-auth" class="status"></div>
-    </div>
-
-    <!-- Painel Principal -->
-    <div id="tela-app" class="oculto">
-      <div class="card">
-        <h2>Novo aluno</h2>
-        <input id="nome-aluno" type="text" placeholder="Nome completo do aluno" />
-        <input id="modalidade-aluno" type="text" placeholder="Modalidade (ex.: Jiu-Jitsu, Muay Thai)" />
-        <select id="status-aluno">
-          <option value="Ativo">Ativo</option>
-          <option value="Pendente">Pendente</option>
-        </select>
-        <button id="btn-salvar-aluno" type="button">Guardar aluno</button>
-        <div id="msg-app" class="status"></div>
-      </div>
-
-      <div class="card">
-        <h2>Alunos registados</h2>
-        <div id="lista-alunos">A carregar...</div>
-      </div>
-    </div>
-  </div>
-
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
-    import {
-      getAuth,
-      createUserWithEmailAndPassword,
-      signInWithEmailAndPassword,
-      signOut,
-      onAuthStateChanged
-    } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
-    import {
-      getDatabase,
-      ref,
-      push,
-      set,
-      onValue
-    } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyBz0Qaz1pmCoXf2NfvaeYfPmBk7d855M40",
-      authDomain: "academia-1108d.firebaseapp.com",
-      databaseURL: "https://academia-1108d-default-rtdb.firebaseio.com",
-      projectId: "academia-1108d",
-      storageBucket: "academia-1108d.firebasestorage.app",
-      messagingSenderId: "339069724218",
-      appId: "1:339069724218:web:10b6358f19c52479b0f703"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getDatabase(app);
-
-    const telaAuth = document.getElementById("tela-auth");
-    const telaApp = document.getElementById("tela-app");
-    const usuarioAtual = document.getElementById("usuario-atual");
-    const btnSair = document.getElementById("btn-sair");
-    const msgAuth = document.getElementById("msg-auth");
-    const msgApp = document.getElementById("msg-app");
-    const listaAlunos = document.getElementById("lista-alunos");
-
-    document.getElementById("btn-entrar").addEventListener("click", async () => {
-      const email = document.getElementById("email").value.trim();
-      const senha = document.getElementById("senha").value;
-      msgAuth.textContent = "A entrar...";
-      try {
-        await signInWithEmailAndPassword(auth, email, senha);
-        msgAuth.textContent = "";
-      } catch (err) {
-        msgAuth.textContent = "Erro ao entrar: " + err.message;
-      }
-    });
-
-    document.getElementById("btn-cadastrar").addEventListener("click", async () => {
-      const email = document.getElementById("email").value.trim();
-      const senha = document.getElementById("senha").value;
-      msgAuth.textContent = "A criar conta...";
-      try {
-        await createUserWithEmailAndPassword(auth, email, senha);
-        msgAuth.textContent = "Conta criada com sucesso.";
-      } catch (err) {
-        msgAuth.textContent = "Erro ao criar conta: " + err.message;
-      }
-    });
-
-    btnSair.addEventListener("click", async () => {
-      await signOut(auth);
-    });
-
-    document.getElementById("btn-salvar-aluno").addEventListener("click", async () => {
-      const nome = document.getElementById("nome-aluno").value.trim();
-      const modalidade = document.getElementById("modalidade-aluno").value.trim();
-      const status = document.getElementById("status-aluno").value;
-
-      if (!nome || !modalidade) {
-        msgApp.textContent = "Preencha o nome e a modalidade.";
-        return;
-      }
-
-      msgApp.textContent = "A guardar...";
-      try {
-        const novoRef = push(ref(db, "academia/alunos"));
-        await set(novoRef, {
-          id: novoRef.key,
-          nome,
-          modalidade,
-          status,
-          criadoEm: new Date().toISOString()
-        });
-        document.getElementById("nome-aluno").value = "";
-        document.getElementById("modalidade-aluno").value = "";
-        msgApp.textContent = "Aluno guardado com sucesso.";
-      } catch (err) {
-        msgApp.textContent = "Erro ao guardar: " + err.message;
-      }
-    });
-
-    function escutarAlunos() {
-      onValue(ref(db, "academia/alunos"), (snapshot) => {
-        if (!snapshot.exists()) {
-          listaAlunos.innerHTML = "<p>Nenhum aluno registado ainda.</p>";
-          return;
-        }
-        const dados = snapshot.val();
-        const itens = Object.values(dados).reverse();
-        listaAlunos.innerHTML = itens
-          .map(
-            (aluno) => `
-              <div class="aluno-item">
-                <strong>${aluno.nome}</strong><br />
-                <span>${aluno.modalidade} — <strong>${aluno.status}</strong></span>
-              </div>
-            `
-          )
-          .join("");
-      });
-    }
-
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        usuarioAtual.textContent = user.email;
-        btnSair.classList.remove("oculto");
-        telaAuth.classList.add("oculto");
-        telaApp.classList.remove("oculto");
-        escutarAlunos();
-      } else {
-        usuarioAtual.textContent = "Não autenticado";
-        btnSair.classList.add("oculto");
-        telaAuth.classList.remove("oculto");
-        telaApp.classList.add("oculto");
-      }
-    });
-  </script>
-</body>
-</html>
+    textarea { min-height: 76px; resize: vertical; }
