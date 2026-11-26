@@ -177,47 +177,13 @@
         <div class="brand-sub" id="headerUser">Gestão e Teste de WhatsApp</div>
       </div>
     </div>
-    <div style="display:flex; gap:6px;">
-      <button id="btnTrocarConfig" class="btn-outline btn-sm hidden" type="button">Config Firebase</button>
-      <button id="btnLogout" class="btn-outline btn-sm hidden" type="button">Sair</button>
-    </div>
+    <button id="btnLogout" class="btn-outline btn-sm hidden" type="button">Sair</button>
   </header>
 
   <main class="container">
-    <!-- CONFIGURAÇÃO DO FIREBASE (SEM CHAVES DE TESTE FIXAS) -->
-    <section id="setupSection" class="card">
-      <h2>Conectar ao Seu Firebase (Sem Chaves de Teste)</h2>
-      <p class="desc">
-        Cole aqui os dados do seu projeto no Firebase (você pode colar o bloco inteiro do <code>firebaseConfig</code> ou preencher os campos). Fica salvo neste navegador.
-      </p>
-
-      <label for="rawConfigInput">Colar bloco firebaseConfig (opcional — preenche os campos abaixo)</label>
-      <textarea id="rawConfigInput" placeholder='Ex.: apiKey: "...", authDomain: "...", databaseURL: "...", projectId: "...", appId: "..."'></textarea>
-      <button id="btnExtrairConfig" class="btn-outline btn-sm mt-2" type="button">Preencher Campos do Texto Colado</button>
-
-      <label for="cfgApiKey">apiKey</label>
-      <input id="cfgApiKey" type="text" placeholder="Sua apiKey do Firebase" />
-
-      <label for="cfgAuthDomain">authDomain</label>
-      <input id="cfgAuthDomain" type="text" placeholder="Ex.: seu-projeto.firebaseapp.com" />
-
-      <label for="cfgDatabaseURL">databaseURL (Realtime Database)</label>
-      <input id="cfgDatabaseURL" type="text" placeholder="Ex.: https://seu-projeto-default-rtdb.firebaseio.com" />
-
-      <label for="cfgProjectId">projectId</label>
-      <input id="cfgProjectId" type="text" placeholder="Ex.: seu-projeto" />
-
-      <label for="cfgAppId">appId</label>
-      <input id="cfgAppId" type="text" placeholder="Ex.: 1:123456:web:abcdef" />
-
-      <button id="btnSalvarConfig" class="btn-primary" type="button">Salvar Conexão e Ir para Login</button>
-      <div id="setupMsg" class="status-msg"></div>
-    </section>
-
-    <!-- TELA DE LOGIN / CADASTRO -->
-    <section id="authSection" class="card hidden">
+    <section id="authSection" class="card">
       <h2>Entrar ou Criar Conta</h2>
-      <p class="desc">Acesse com seu e-mail e senha cadastrados no Firebase Authentication.</p>
+      <p class="desc">Acesse com seu e-mail e senha para testar o painel e o WhatsApp.</p>
 
       <label for="nomeAcademia">Nome da Academia</label>
       <input id="nomeAcademia" type="text" placeholder="Ex.: Academia da Natália" />
@@ -232,15 +198,14 @@
       <button id="btnLogin" class="btn-secondary mt-2" style="width:100%;" type="button">Já Tenho Conta — Entrar</button>
 
       <div id="authMsg" class="status-msg"></div>
-      <div id="diagBox" class="diag-box">Diagnóstico: pronto para autenticar.</div>
+      <div id="diagBox" class="diag-box">Diagnóstico: pronto para autenticar no projeto academia-1108d.</div>
     </section>
 
-    <!-- PAINEL PRINCIPAL -->
     <section id="appSection" class="hidden">
       <div class="card">
         <h2>Mensagem para o WhatsApp</h2>
         <label for="mensagemPadrao">Texto da Mensagem</label>
-        <textarea id="mensagemPadrao">Olá {nome}! Passando para avisar sobre os treinos e a situação da mensalidade na academia.</textarea>
+        <textarea id="mensagemPadrao">Olá {nome}! Passando para avisar sobre os treinos e a situação na academia.</textarea>
         <div id="conexaoBancoMsg" class="diag-box">Conexão: aguardando...</div>
       </div>
 
@@ -292,7 +257,7 @@
   </div>
 
   <script type="module">
-    import { initializeApp, deleteApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import {
       getAuth,
       createUserWithEmailAndPassword,
@@ -310,24 +275,26 @@
       onValue
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-    const STORAGE_KEY = "academia32_firebase_config_v1";
+    const firebaseConfig = {
+      apiKey: "AIzaSyBz0Qaz1pmCoXf2NfvaeYfPmBk7d855M40",
+      authDomain: "academia-1108d.firebaseapp.com",
+      databaseURL: "https://academia-1108d-default-rtdb.firebaseio.com",
+      projectId: "academia-1108d",
+      storageBucket: "academia-1108d.firebasestorage.app",
+      messagingSenderId: "339069724218",
+      appId: "1:339069724218:web:10b6358f19c52479b0f703"
+    };
 
-    const setupSection = document.getElementById("setupSection");
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getDatabase(app);
+
     const authSection = document.getElementById("authSection");
     const appSection = document.getElementById("appSection");
     const bottomWhatsappBar = document.getElementById("bottomWhatsappBar");
-    const btnTrocarConfig = document.getElementById("btnTrocarConfig");
     const btnLogout = document.getElementById("btnLogout");
     const headerTitle = document.getElementById("headerTitle");
     const headerUser = document.getElementById("headerUser");
-
-    const rawConfigInput = document.getElementById("rawConfigInput");
-    const cfgApiKey = document.getElementById("cfgApiKey");
-    const cfgAuthDomain = document.getElementById("cfgAuthDomain");
-    const cfgDatabaseURL = document.getElementById("cfgDatabaseURL");
-    const cfgProjectId = document.getElementById("cfgProjectId");
-    const cfgAppId = document.getElementById("cfgAppId");
-    const setupMsg = document.getElementById("setupMsg");
 
     const authMsg = document.getElementById("authMsg");
     const diagBox = document.getElementById("diagBox");
@@ -348,13 +315,9 @@
     const totalAlunosEl = document.getElementById("totalAlunos");
     const qtdSelecionadosEl = document.getElementById("qtdSelecionados");
 
-    let auth = null;
-    let db = null;
     let currentUser = null;
     let alunosCache = [];
     let selectedIds = new Set();
-    let unsubPerfil = null;
-    let unsubAlunos = null;
 
     function setDiag(texto) {
       diagBox.textContent = "Diagnóstico: " + texto;
@@ -362,4 +325,261 @@
 
     function formatError(err) {
       const code = err?.code || "sem-codigo";
-      if (code.includes("
+      if (code.includes("auth/email-already-in-use")) return `E-mail já cadastrado (${code}). Use "Já Tenho Conta — Entrar".`;
+      if (code.includes("auth/invalid-email")) return `Formato de e-mail inválido (${code}).`;
+      if (code.includes("auth/weak-password")) return `Senha curta — use 6 ou mais caracteres (${code}).`;
+      if (code.includes("auth/invalid-credential") || code.includes("auth/user-not-found") || code.includes("auth/wrong-password")) {
+        return `E-mail ou senha não conferem (${code}).`;
+      }
+      if (code.includes("auth/unauthorized-domain")) {
+        return `Domínio ${window.location.hostname} não autorizado no Firebase Auth (${code}).`;
+      }
+      return `${err?.message || "Erro desconhecido"} (${code})`;
+    }
+
+    function cleanPhone(phone) {
+      let digits = (phone || "").replace(/\D/g, "");
+      if (digits.length === 10 || digits.length === 11) {
+        digits = "55" + digits;
+      }
+      return digits;
+    }
+
+    function updateSelectedCounter() {
+      qtdSelecionadosEl.textContent = String(selectedIds.size);
+    }
+
+    function buildMessageForAluno(aluno) {
+      const template = mensagemPadraoInput.value || "Olá {nome}! Mensagem da academia.";
+      return template.replaceAll("{nome}", aluno.nome || "Aluno");
+    }
+
+    function renderAlunos() {
+      totalAlunosEl.textContent = String(alunosCache.length);
+      listaAlunosEl.innerHTML = "";
+
+      if (!alunosCache.length) {
+        listaAlunosEl.innerHTML = `<p style="font-size:13px; color:var(--muted);">Nenhum aluno cadastrado ainda.</p>`;
+        updateSelectedCounter();
+        return;
+      }
+
+      alunosCache.forEach((aluno) => {
+        const isPago = aluno.status === "pago";
+        const isChecked = selectedIds.has(aluno.id);
+
+        const item = document.createElement("div");
+        item.className = "aluno-item";
+
+        const left = document.createElement("div");
+        left.className = "aluno-left";
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.className = "aluno-check";
+        checkbox.checked = isChecked;
+        checkbox.addEventListener("change", () => {
+          if (checkbox.checked) selectedIds.add(aluno.id);
+          else selectedIds.delete(aluno.id);
+          updateSelectedCounter();
+        });
+
+        const info = document.createElement("div");
+        info.innerHTML = `
+          <div class="aluno-nome">${aluno.nome}</div>
+          <div class="aluno-meta">${aluno.modalidade || "Sem turma"} • WA: ${aluno.whatsapp || "Sem número"}</div>
+        `;
+
+        left.appendChild(checkbox);
+        left.appendChild(info);
+
+        const badge = document.createElement("span");
+        badge.className = `badge ${isPago ? "badge-pago" : "badge-pendente"}`;
+        badge.textContent = isPago ? "Pago" : "Pendente";
+
+        const actions = document.createElement("div");
+        actions.className = "aluno-actions";
+
+        const btnToggle = document.createElement("button");
+        btnToggle.type = "button";
+        btnToggle.className = "btn-outline btn-sm";
+        btnToggle.textContent = isPago ? "Marcar Pendente" : "Marcar Pago";
+        btnToggle.addEventListener("click", async () => {
+          if (!currentUser) return;
+          const nextStatus = isPago ? "pendente" : "pago";
+          await update(ref(db, `academias/${currentUser.uid}/alunos/${aluno.id}`), { status: nextStatus });
+        });
+
+        const btnWaSingle = document.createElement("button");
+        btnWaSingle.type = "button";
+        btnWaSingle.className = "btn-wa btn-sm";
+        btnWaSingle.textContent = "WhatsApp";
+        btnWaSingle.addEventListener("click", () => {
+          const phone = cleanPhone(aluno.whatsapp);
+          const msg = encodeURIComponent(buildMessageForAluno(aluno));
+          const url = phone ? `https://wa.me/${phone}?text=${msg}` : `https://wa.me/?text=${msg}`;
+          window.open(url, "_blank", "noopener");
+        });
+
+        const btnDel = document.createElement("button");
+        btnDel.type = "button";
+        btnDel.className = "btn-outline btn-sm";
+        btnDel.textContent = "Excluir";
+        btnDel.addEventListener("click", async () => {
+          if (!currentUser) return;
+          selectedIds.delete(aluno.id);
+          await remove(ref(db, `academias/${currentUser.uid}/alunos/${aluno.id}`));
+        });
+
+        actions.appendChild(btnToggle);
+        actions.appendChild(btnWaSingle);
+        actions.appendChild(btnDel);
+
+        item.appendChild(left);
+        item.appendChild(badge);
+        item.appendChild(actions);
+        listaAlunosEl.appendChild(item);
+      });
+
+      updateSelectedCounter();
+    }
+
+    document.getElementById("btnCriarConta").addEventListener("click", async () => {
+      authMsg.textContent = "";
+      const nomeAcad = nomeAcademiaInput.value.trim() || "32 Academia";
+      const email = emailInput.value.trim();
+      const senha = senhaInput.value;
+      setDiag(`Criando conta para "${email}"...`);
+
+      try {
+        const cred = await createUserWithEmailAndPassword(auth, email, senha);
+        await set(ref(db, `academias/${cred.user.uid}/perfil`), {
+          nomeAcademia: nomeAcad,
+          criadoEm: Date.now()
+        });
+        setDiag(`Conta criada com sucesso! UID: ${cred.user.uid}`);
+      } catch (err) {
+        const msg = formatError(err);
+        authMsg.textContent = msg;
+        setDiag(`Falha ao criar conta: ${msg}`);
+      }
+    });
+
+    document.getElementById("btnLogin").addEventListener("click", async () => {
+      authMsg.textContent = "";
+      const email = emailInput.value.trim();
+      const senha = senhaInput.value;
+      setDiag(`Entrando com "${email}"...`);
+
+      try {
+        const cred = await signInWithEmailAndPassword(auth, email, senha);
+        setDiag(`Login aprovado! UID: ${cred.user.uid}`);
+      } catch (err) {
+        const msg = formatError(err);
+        authMsg.textContent = msg;
+        setDiag(`Falha no login: ${msg}`);
+      }
+    });
+
+    btnLogout.addEventListener("click", async () => {
+      selectedIds.clear();
+      setDiag("Sessão encerrada.");
+      await signOut(auth);
+    });
+
+    document.getElementById("btnAddAluno").addEventListener("click", async () => {
+      if (!currentUser) return;
+      alunoMsg.textContent = "";
+      const nome = alunoNomeInput.value.trim();
+      const whatsapp = alunoWhatsappInput.value.trim();
+      const modalidade = alunoModalidadeInput.value.trim();
+      const status = alunoStatusSelect.value;
+
+      if (!nome) {
+        alunoMsg.textContent = "Digite o nome do aluno.";
+        return;
+      }
+
+      const newRef = push(ref(db, `academias/${currentUser.uid}/alunos`));
+      await set(newRef, { nome, whatsapp, modalidade, status, criadoEm: Date.now() });
+
+      alunoNomeInput.value = "";
+      alunoWhatsappInput.value = "";
+      alunoModalidadeInput.value = "";
+      alunoMsg.className = "status-msg ok-msg";
+      alunoMsg.textContent = "Aluno salvo!";
+      setTimeout(() => { alunoMsg.textContent = ""; }, 2000);
+    });
+
+    document.getElementById("btnMarcarTodos").addEventListener("click", () => {
+      selectedIds = new Set(alunosCache.map((a) => a.id));
+      renderAlunos();
+    });
+
+    document.getElementById("btnDesmarcarTodos").addEventListener("click", () => {
+      selectedIds.clear();
+      renderAlunos();
+    });
+
+    document.getElementById("btnSelecionarVermelhos").addEventListener("click", () => {
+      selectedIds = new Set(alunosCache.filter((a) => a.status !== "pago").map((a) => a.id));
+      renderAlunos();
+    });
+
+    document.getElementById("btnEnviarGeralWhatsapp").addEventListener("click", async () => {
+      const escolhidos = alunosCache.filter((a) => selectedIds.has(a.id));
+      if (!escolhidos.length) {
+        alert("Selecione pelo menos um aluno para testar a mensagem.");
+        return;
+      }
+
+      const baseMsg = (mensagemPadraoInput.value || "Mensagem da academia.").trim();
+      const listaNomes = escolhidos
+        .map((a) => `• ${a.nome} (${a.status === "pago" ? "Pago" : "Pendente"})`)
+        .join("\n");
+
+      const textoFinal = `${baseMsg}\n\nAlunos marcados:\n${listaNomes}`;
+
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(textoFinal);
+        }
+      } catch (_) {}
+
+      window.open(`https://wa.me/?text=${encodeURIComponent(textoFinal)}`, "_blank", "noopener");
+    });
+
+    onAuthStateChanged(auth, (user) => {
+      currentUser = user;
+      if (user) {
+        authSection.classList.add("hidden");
+        appSection.classList.remove("hidden");
+        bottomWhatsappBar.classList.remove("hidden");
+        btnLogout.classList.remove("hidden");
+        headerUser.textContent = user.email || "Conta conectada";
+        conexaoBancoMsg.textContent = `Conectado como ${user.email} • Caminho: academias/${user.uid}/alunos`;
+
+        onValue(ref(db, `academias/${user.uid}/perfil`), (snap) => {
+          const perfil = snap.val();
+          if (perfil?.nomeAcademia) headerTitle.textContent = perfil.nomeAcademia;
+        });
+
+        onValue(ref(db, `academias/${user.uid}/alunos`), (snap) => {
+          const data = snap.val() || {};
+          alunosCache = Object.entries(data).map(([id, val]) => ({ id, ...val }));
+          renderAlunos();
+        }, (err) => {
+          conexaoBancoMsg.textContent = `Erro ao ler banco: ${err.message}`;
+        });
+      } else {
+        authSection.classList.remove("hidden");
+        appSection.classList.add("hidden");
+        bottomWhatsappBar.classList.add("hidden");
+        btnLogout.classList.add("hidden");
+        headerTitle.textContent = "32 Academia";
+        headerUser.textContent = "Gestão e Teste de WhatsApp";
+      }
+    });
+  </script>
+</body>
+</html>
