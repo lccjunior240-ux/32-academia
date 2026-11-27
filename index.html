@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#0b1526" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>32 Academia — Gestão Profissional</title>
   <style>
     :root {
@@ -150,6 +152,15 @@
     }
     .btn-primary:hover { filter: brightness(1.06); }
 
+    .btn-install {
+      background: linear-gradient(180deg, #d98a55 0%, var(--copper) 100%);
+      color: #070e1a;
+      border-color: #7c4722;
+      width: 100%;
+      margin-top: 10px;
+      font-weight: 900;
+    }
+
     .btn-secondary {
       background: var(--surface);
       color: var(--ink);
@@ -198,7 +209,6 @@
     .pill-red { background: var(--red-dark); box-shadow: 0 2px 6px rgba(185, 28, 28, 0.25); }
     .pill-red:hover { background: var(--red); }
 
-    /* RESUMO RÁPIDO NO PAINEL */
     .summary-strip {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -218,7 +228,6 @@
     .summary-num.pend { color: var(--red-dark); }
     .summary-lbl { font-size: 11px; font-weight: 700; color: var(--muted); margin-top: 3px; }
 
-    /* BOTÕES DO MENU COM ÍCONES MAIORES */
     .menu-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
     .menu-btn {
       background: var(--surface);
@@ -256,7 +265,6 @@
     .menu-sub { font-size: 12px; color: var(--muted); font-weight: 600; display: block; margin-top: 2px; }
     .menu-arrow { font-size: 22px; color: var(--copper); font-weight: 900; }
 
-    /* ÁREA COM SÍMBOLO EMBAIXO DE TODOS OS BOTÕES */
     .bottom-emblem-card {
       margin-top: 16px;
       background: linear-gradient(135deg, var(--navy) 0%, var(--navy-2) 100%);
@@ -366,6 +374,7 @@
 
       <button id="btnLogin" class="btn-primary" type="button">Entrar</button>
       <button id="btnCriarConta" class="btn-secondary mt-2" type="button">Criar Conta Nova</button>
+      <button id="btnInstalarApp" class="btn-install hidden" type="button">📲 Instalar Aplicativo no Celular</button>
 
       <div id="authMsg" class="status-msg"></div>
       <div id="authDiag" class="diag-box">Status: pronto para entrar.</div>
@@ -621,8 +630,62 @@
 
   <script>
     (function () {
+      // Configura Manifest (PWA) e Service Worker para permitir "Instalar aplicativo" no Chrome
+      try {
+        const iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"><rect width="192" height="192" rx="40" fill="#0b1526"/><rect x="14" y="14" width="164" height="164" rx="30" fill="none" stroke="#c87d4b" stroke-width="6"/><text x="96" y="108" text-anchor="middle" font-family="system-ui,sans-serif" font-style="italic" font-weight="900" font-size="68" fill="#ffffff">32</text><text x="96" y="146" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="800" font-size="22" fill="#c87d4b">ACADEMIA</text></svg>`;
+        const iconUrl = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(iconSvg);
+        const manifestObj = {
+          name: "32 Academia",
+          short_name: "32 Academia",
+          start_url: "./",
+          scope: "./",
+          display: "standalone",
+          background_color: "#eef2f6",
+          theme_color: "#0b1526",
+          icons: [
+            { src: iconUrl, sizes: "192x192", type: "image/svg+xml", purpose: "any" },
+            { src: iconUrl, sizes: "512x512", type: "image/svg+xml", purpose: "any" }
+          ]
+        };
+        const manifestBlob = new Blob([JSON.stringify(manifestObj)], { type: "application/manifest+json" });
+        const manifestLink = document.createElement("link");
+        manifestLink.rel = "manifest";
+        manifestLink.href = URL.createObjectURL(manifestBlob);
+        document.head.appendChild(manifestLink);
+
+        if ("serviceWorker" in navigator) {
+          const swCode = `
+            self.addEventListener("install", function(event) { self.skipWaiting(); });
+            self.addEventListener("activate", function(event) { event.waitUntil(self.clients.claim()); });
+            self.addEventListener("fetch", function(event) {});
+          `;
+          const swBlob = new Blob([swCode], { type: "application/javascript" });
+          const swUrl = URL.createObjectURL(swBlob);
+          navigator.serviceWorker.register(swUrl, { scope: "./" }).catch(function () {});
+        }
+      } catch (_) {}
+
+      let deferredInstallPrompt = null;
+      const btnInstalarApp = document.getElementById("btnInstalarApp");
+
+      window.addEventListener("beforeinstallprompt", function (e) {
+        e.preventDefault();
+        deferredInstallPrompt = e;
+        if (btnInstalarApp) btnInstalarApp.classList.remove("hidden");
+      });
+
+      if (btnInstalarApp) {
+        btnInstalarApp.addEventListener("click", async function () {
+          if (!deferredInstallPrompt) return;
+          deferredInstallPrompt.prompt();
+          await deferredInstallPrompt.userChoice.catch(function () {});
+          deferredInstallPrompt = null;
+          btnInstalarApp.classList.add("hidden");
+        });
+      }
+
       const CRED_KEY = "academia32_cred_v1";
-      const DATA_PREFIX = "academia32_dados_v1_";
+      const DATA_PREFIX = "academia32_dados_v2_";
       const firebaseConfig = {
         apiKey: "AIzaSyBz0Qaz1pmCoXf2NfvaeYfPmBk7d855M40",
         authDomain: "academia-1108d.firebaseapp.com",
@@ -651,7 +714,7 @@
       const subViews = ["viewAddAluno", "viewTodosAlunos", "viewRelatorio", "viewFestas", "viewGraduacao"];
 
       let currentUser = null;
-      let activeScopeKey = "padrao";
+      let activeScopeKey = "global";
       let alunosCache = [];
       let festasCache = [];
       let gradCache = [];
@@ -661,10 +724,6 @@
       function setDiag(txt) {
         if (authDiag) authDiag.textContent = "Status: " + txt;
       }
-
-      window.addEventListener("error", function (e) {
-        setDiag("Aviso: " + (e.message || "erro de script"));
-      });
 
       function readSavedCred() {
         try {
@@ -699,43 +758,49 @@
         }
       }
 
-      function getScopeStorageKey() {
-        return DATA_PREFIX + activeScopeKey;
+      function readBundle(key) {
+        try {
+          const raw = localStorage.getItem(DATA_PREFIX + key);
+          return raw ? JSON.parse(raw) : null;
+        } catch (_) {
+          return null;
+        }
       }
 
-      function persistLocalLists() {
+      function writeBundle(key, bundle) {
         try {
-          localStorage.setItem(getScopeStorageKey(), JSON.stringify({
-            alunos: alunosCache,
-            festas: festasCache,
-            graduacao: gradCache,
-            nomeAcademia: (nomeAcademiaEl.value || "").trim()
-          }));
+          localStorage.setItem(DATA_PREFIX + key, JSON.stringify(bundle));
         } catch (_) {}
       }
 
+      function persistLocalLists() {
+        const payload = {
+          alunos: alunosCache,
+          festas: festasCache,
+          graduacao: gradCache,
+          nomeAcademia: (nomeAcademiaEl.value || "").trim(),
+          updatedAt: Date.now()
+        };
+        writeBundle("global", payload);
+        if (activeScopeKey && activeScopeKey !== "global") {
+          writeBundle(activeScopeKey, payload);
+        }
+      }
+
       function hydrateLocalLists(scope) {
-        activeScopeKey = scope || "padrao";
-        try {
-          const raw = localStorage.getItem(getScopeStorageKey());
-          if (raw) {
-            const parsed = JSON.parse(raw);
-            alunosCache = Array.isArray(parsed.alunos) ? parsed.alunos : [];
-            festasCache = Array.isArray(parsed.festas) ? parsed.festas : [];
-            gradCache = Array.isArray(parsed.graduacao) ? parsed.graduacao : [];
-            if (parsed.nomeAcademia) {
-              headerTitle.textContent = parsed.nomeAcademia;
-              emblemFooterLabel.textContent = `${parsed.nomeAcademia.toUpperCase()} • GESTÃO DE ALUNOS`;
-            }
-          } else {
-            alunosCache = [];
-            festasCache = [];
-            gradCache = [];
-          }
-        } catch (_) {
-          alunosCache = [];
-          festasCache = [];
-          gradCache = [];
+        activeScopeKey = scope || "global";
+        const scoped = activeScopeKey !== "global" ? readBundle(activeScopeKey) : null;
+        const globalData = readBundle("global");
+        const chosen = (scoped && ((scoped.alunos && scoped.alunos.length) || (scoped.festas && scoped.festas.length) || (scoped.graduacao && scoped.graduacao.length)))
+          ? scoped
+          : (globalData || scoped || {});
+
+        alunosCache = Array.isArray(chosen.alunos) ? chosen.alunos : [];
+        festasCache = Array.isArray(chosen.festas) ? chosen.festas : [];
+        gradCache = Array.isArray(chosen.graduacao) ? chosen.graduacao : [];
+        if (chosen.nomeAcademia) {
+          headerTitle.textContent = chosen.nomeAcademia;
+          emblemFooterLabel.textContent = `${chosen.nomeAcademia.toUpperCase()} • GESTÃO DE ALUNOS`;
         }
         syncAlunosViews();
         renderFestas();
@@ -1346,13 +1411,14 @@
       });
 
       loadSavedCredIntoInputs();
-      hydrateLocalLists("padrao");
+      hydrateLocalLists("global");
 
       if (auth) {
         auth.onAuthStateChanged((user) => {
           currentUser = user;
           if (user) {
             hydrateLocalLists(user.uid);
+            persistLocalLists();
             authSection.classList.add("hidden");
             btnLogout.classList.remove("hidden");
             headerUser.textContent = user.email || "Conectado";
@@ -1371,32 +1437,41 @@
               db.ref(`academias/${user.uid}/alunos`).on("value", (snap) => {
                 const data = snap.val();
                 if (data && typeof data === "object") {
-                  alunosCache = Object.entries(data).map(([id, val]) => ({ id, ...val }));
-                  persistLocalLists();
-                  syncAlunosViews();
+                  const remoteList = Object.entries(data).map(([id, val]) => ({ id, ...val }));
+                  if (remoteList.length > 0 || alunosCache.length === 0) {
+                    alunosCache = remoteList;
+                    persistLocalLists();
+                    syncAlunosViews();
+                  }
                 }
               });
 
               db.ref(`academias/${user.uid}/festas`).on("value", (snap) => {
                 const data = snap.val();
                 if (data && typeof data === "object") {
-                  festasCache = Object.entries(data).map(([id, val]) => ({ id, ...val }));
-                  persistLocalLists();
-                  renderFestas();
+                  const remoteList = Object.entries(data).map(([id, val]) => ({ id, ...val }));
+                  if (remoteList.length > 0 || festasCache.length === 0) {
+                    festasCache = remoteList;
+                    persistLocalLists();
+                    renderFestas();
+                  }
                 }
               });
 
               db.ref(`academias/${user.uid}/graduacao`).on("value", (snap) => {
                 const data = snap.val();
                 if (data && typeof data === "object") {
-                  gradCache = Object.entries(data).map(([id, val]) => ({ id, ...val }));
-                  persistLocalLists();
-                  renderGraduacao();
+                  const remoteList = Object.entries(data).map(([id, val]) => ({ id, ...val }));
+                  if (remoteList.length > 0 || gradCache.length === 0) {
+                    gradCache = remoteList;
+                    persistLocalLists();
+                    renderGraduacao();
+                  }
                 }
               });
             }
           } else {
-            hydrateLocalLists("padrao");
+            hydrateLocalLists("global");
             authSection.classList.remove("hidden");
             menuSection.classList.add("hidden");
             subViews.forEach((id) => document.getElementById(id).classList.add("hidden"));
