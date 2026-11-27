@@ -217,6 +217,37 @@
       margin-bottom: 12px;
     }
 
+    .month-bar {
+      background: #f8fafc;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 14px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+
+    .finance-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin: 12px 0;
+    }
+    .finance-box {
+      background: var(--surface-2);
+      border: 1.5px solid #cbd5e1;
+      border-radius: 14px;
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .finance-label { font-size: 12px; font-weight: 700; color: var(--muted); }
+    .finance-val { font-size: 20px; font-weight: 900; color: var(--navy); }
+    .finance-val.in { color: var(--green-dark); }
+    .finance-val.out { color: var(--red-dark); }
+    .finance-val.profit { color: var(--green-dark); }
+    .finance-val.loss { color: var(--red-dark); }
+
     .summary-strip {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -460,6 +491,39 @@
           </span>
           <span class="menu-arrow">›</span>
         </button>
+
+        <button type="button" class="menu-btn" data-open="viewEntradas">
+          <span class="menu-btn-left">
+            <span class="menu-icon">💰</span>
+            <span>
+              <span class="menu-title">Entradas / Tudo que Entrou</span>
+              <span class="menu-sub">Lançamentos datados e consulta por mês</span>
+            </span>
+          </span>
+          <span class="menu-arrow">›</span>
+        </button>
+
+        <button type="button" class="menu-btn" data-open="viewDespesas">
+          <span class="menu-btn-left">
+            <span class="menu-icon">🧾</span>
+            <span>
+              <span class="menu-title">Despesas</span>
+              <span class="menu-sub">Aluguel, água, luz, insumos e outros gastos datados</span>
+            </span>
+          </span>
+          <span class="menu-arrow">›</span>
+        </button>
+
+        <button type="button" class="menu-btn" data-open="viewBalanco">
+          <span class="menu-btn-left">
+            <span class="menu-icon">📈</span>
+            <span>
+              <span class="menu-title">Faturamento e Lucro</span>
+              <span class="menu-sub">Histórico mensal, lucro e exportar WhatsApp / E-mail</span>
+            </span>
+          </span>
+          <span class="menu-arrow">›</span>
+        </button>
       </div>
 
       <div class="bottom-emblem-card" aria-hidden="true">
@@ -648,1001 +712,144 @@ Chave Pix: {pix}</textarea>
 
       <button type="button" class="btn-exit-bottom" data-back="menuSection">Sair / Voltar aos Botões</button>
     </section>
-  </main>
 
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-
-  <script>
-    (function () {
-      try {
-        const iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"><rect width="192" height="192" rx="40" fill="#0b1526"/><rect x="14" y="14" width="164" height="164" rx="30" fill="none" stroke="#c87d4b" stroke-width="6"/><text x="96" y="108" text-anchor="middle" font-family="system-ui,sans-serif" font-style="italic" font-weight="900" font-size="68" fill="#ffffff">32</text><text x="96" y="146" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="800" font-size="22" fill="#c87d4b">ACADEMIA</text></svg>`;
-        const iconUrl = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(iconSvg);
-        const manifestObj = {
-          name: "32 Academia",
-          short_name: "32 Academia",
-          start_url: "./",
-          scope: "./",
-          display: "standalone",
-          background_color: "#eef2f6",
-          theme_color: "#0b1526",
-          icons: [
-            { src: iconUrl, sizes: "192x192", type: "image/svg+xml", purpose: "any" },
-            { src: iconUrl, sizes: "512x512", type: "image/svg+xml", purpose: "any" }
-          ]
-        };
-        const manifestBlob = new Blob([JSON.stringify(manifestObj)], { type: "application/manifest+json" });
-        const manifestLink = document.createElement("link");
-        manifestLink.rel = "manifest";
-        manifestLink.href = URL.createObjectURL(manifestBlob);
-        document.head.appendChild(manifestLink);
-
-        if ("serviceWorker" in navigator) {
-          const swCode = `
-            self.addEventListener("install", function(event) { self.skipWaiting(); });
-            self.addEventListener("activate", function(event) { event.waitUntil(self.clients.claim()); });
-            self.addEventListener("fetch", function(event) {});
-          `;
-          const swBlob = new Blob([swCode], { type: "application/javascript" });
-          const swUrl = URL.createObjectURL(swBlob);
-          navigator.serviceWorker.register(swUrl, { scope: "./" }).catch(function () {});
-        }
-      } catch (_) {}
-
-      let deferredInstallPrompt = null;
-      const btnInstalarApp = document.getElementById("btnInstalarApp");
-
-      window.addEventListener("beforeinstallprompt", function (e) {
-        e.preventDefault();
-        deferredInstallPrompt = e;
-        if (btnInstalarApp) btnInstalarApp.classList.remove("hidden");
-      });
-
-      if (btnInstalarApp) {
-        btnInstalarApp.addEventListener("click", async function () {
-          if (!deferredInstallPrompt) return;
-          deferredInstallPrompt.prompt();
-          await deferredInstallPrompt.userChoice.catch(function () {});
-          deferredInstallPrompt = null;
-          btnInstalarApp.classList.add("hidden");
-        });
-      }
-
-      const CRED_KEY = "academia32_cred_v1";
-      const DATA_PREFIX = "academia32_dados_v2_";
-      const firebaseConfig = {
-        apiKey: "AIzaSyBz0Qaz1pmCoXf2NfvaeYfPmBk7d855M40",
-        authDomain: "academia-1108d.firebaseapp.com",
-        databaseURL: "https://academia-1108d-default-rtdb.firebaseio.com",
-        projectId: "academia-1108d",
-        storageBucket: "academia-1108d.firebasestorage.app",
-        messagingSenderId: "339069724218",
-        appId: "1:339069724218:web:10b6358f19c52479b0f703"
-      };
-
-      const authSection = document.getElementById("authSection");
-      const menuSection = document.getElementById("menuSection");
-      const btnLogout = document.getElementById("btnLogout");
-      const headerTitle = document.getElementById("headerTitle");
-      const headerUser = document.getElementById("headerUser");
-      const emblemFooterLabel = document.getElementById("emblemFooterLabel");
-      const authMsg = document.getElementById("authMsg");
-      const authDiag = document.getElementById("authDiag");
-
-      const nomeAcademiaEl = document.getElementById("nomeAcademia");
-      const emailEl = document.getElementById("emailInput");
-      const senhaEl = document.getElementById("senhaInput");
-      const savedAccountBox = document.getElementById("savedAccountBox");
-      const savedEmailLabel = document.getElementById("savedEmailLabel");
-
-      const pixChaveEl = document.getElementById("pixChaveInput");
-      const pixRecebedorEl = document.getElementById("pixRecebedorInput");
-      const pixMsgEl = document.getElementById("pixMsg");
-
-      const festaNomeEl = document.getElementById("festaParticipante");
-      const festaWaEl = document.getElementById("festaWhatsapp");
-
-      const subViews = ["viewAddAluno", "viewTodosAlunos", "viewRelatorio", "viewFestas", "viewGraduacao"];
-
-      let currentUser = null;
-      let activeScopeKey = "global";
-      let alunosCache = [];
-      let festasCache = [];
-      let gradCache = [];
-      let pixConfig = { chave: "", recebedor: "" };
-      let filtroAtualRel = "todos";
-      let selecionadosRel = new Set();
-
-      function setDiag(txt) {
-        if (authDiag) authDiag.textContent = "Status: " + txt;
-      }
-
-      function readSavedCred() {
-        try {
-          const raw = localStorage.getItem(CRED_KEY);
-          return raw ? JSON.parse(raw) : null;
-        } catch (_) {
-          return null;
-        }
-      }
-
-      function saveCred(email, senha, nomeAcademia) {
-        try {
-          localStorage.setItem(CRED_KEY, JSON.stringify({
-            email: (email || "").trim(),
-            senha: senha || "",
-            nomeAcademia: (nomeAcademia || "").trim()
-          }));
-          loadSavedCredIntoInputs();
-        } catch (_) {}
-      }
-
-      function loadSavedCredIntoInputs() {
-        const saved = readSavedCred();
-        if (saved && saved.email) {
-          if (!emailEl.value.trim()) emailEl.value = saved.email;
-          if (!senhaEl.value && saved.senha) senhaEl.value = saved.senha;
-          if (!nomeAcademiaEl.value.trim() && saved.nomeAcademia) nomeAcademiaEl.value = saved.nomeAcademia;
-          savedEmailLabel.textContent = "Conta salva: " + saved.email;
-          savedAccountBox.classList.remove("hidden");
-        } else {
-          savedAccountBox.classList.add("hidden");
-        }
-      }
-
-      function readBundle(key) {
-        try {
-          const raw = localStorage.getItem(DATA_PREFIX + key);
-          return raw ? JSON.parse(raw) : null;
-        } catch (_) {
-          return null;
-        }
-      }
-
-      function writeBundle(key, bundle) {
-        try {
-          localStorage.setItem(DATA_PREFIX + key, JSON.stringify(bundle));
-        } catch (_) {}
-      }
-
-      function syncPixInputs() {
-        if (pixChaveEl) pixChaveEl.value = pixConfig.chave || "";
-        if (pixRecebedorEl) pixRecebedorEl.value = pixConfig.recebedor || "";
-      }
-
-      function persistLocalLists() {
-        const payload = {
-          alunos: alunosCache,
-          festas: festasCache,
-          graduacao: gradCache,
-          pix: pixConfig,
-          nomeAcademia: (nomeAcademiaEl.value || "").trim(),
-          updatedAt: Date.now()
-        };
-        writeBundle("global", payload);
-        if (activeScopeKey && activeScopeKey !== "global") {
-          writeBundle(activeScopeKey, payload);
-        }
-      }
-
-      function hydrateLocalLists(scope) {
-        activeScopeKey = scope || "global";
-        const scoped = activeScopeKey !== "global" ? readBundle(activeScopeKey) : null;
-        const globalData = readBundle("global");
-        const chosen = (scoped && ((scoped.alunos && scoped.alunos.length) || (scoped.festas && scoped.festas.length) || (scoped.graduacao && scoped.graduacao.length) || (scoped.pix && scoped.pix.chave)))
-          ? scoped
-          : (globalData || scoped || {});
-
-        alunosCache = Array.isArray(chosen.alunos) ? chosen.alunos : [];
-        festasCache = Array.isArray(chosen.festas) ? chosen.festas : [];
-        gradCache = Array.isArray(chosen.graduacao) ? chosen.graduacao : [];
-        pixConfig = (chosen.pix && typeof chosen.pix === "object")
-          ? { chave: chosen.pix.chave || "", recebedor: chosen.pix.recebedor || "" }
-          : { chave: "", recebedor: "" };
-        syncPixInputs();
-
-        if (chosen.nomeAcademia) {
-          headerTitle.textContent = chosen.nomeAcademia;
-          emblemFooterLabel.textContent = `${chosen.nomeAcademia.toUpperCase()} • GESTÃO DE ALUNOS`;
-        }
-        syncAlunosViews();
-        renderFestas();
-        renderGraduacao();
-      }
-
-      function showScreen(screenId) {
-        menuSection.classList.add("hidden");
-        subViews.forEach((id) => {
-          const el = document.getElementById(id);
-          if (el) el.classList.add("hidden");
-        });
-        const target = document.getElementById(screenId);
-        if (target) target.classList.remove("hidden");
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }
-
-      document.querySelectorAll("[data-open]").forEach((btn) => {
-        btn.addEventListener("click", () => showScreen(btn.dataset.open));
-      });
-
-      document.querySelectorAll("[data-back]").forEach((btn) => {
-        btn.addEventListener("click", () => showScreen(btn.dataset.back));
-      });
-
-      function cleanPhone(phone) {
-        let digits = (phone || "").replace(/\D/g, "");
-        if (digits.length === 10 || digits.length === 11) digits = "55" + digits;
-        return digits;
-      }
-
-      function findAlunoPhoneByName(name) {
-        const target = (name || "").trim().toLowerCase();
-        if (!target) return "";
-        const found = alunosCache.find((a) => (a.nome || "").trim().toLowerCase() === target);
-        return found ? cleanPhone(found.whatsapp) : "";
-      }
-
-      // Preenche o WhatsApp automaticamente se o participante digitado já for aluno cadastrado
-      if (festaNomeEl && festaWaEl) {
-        festaNomeEl.addEventListener("input", () => {
-          if (!festaWaEl.value.trim()) {
-            const matched = alunosCache.find(
-              (a) => (a.nome || "").trim().toLowerCase() === festaNomeEl.value.trim().toLowerCase()
-            );
-            if (matched && matched.whatsapp) {
-              festaWaEl.value = matched.whatsapp;
-            }
-          }
-        });
-      }
-
-      function formatPixLine() {
-        const chave = (pixConfig.chave || "").trim();
-        const rec = (pixConfig.recebedor || "").trim();
-        if (!chave) return "";
-        return rec ? `${chave} (${rec})` : chave;
-      }
-
-      function buildChargeMessage(template, alunoNome) {
-        const pixLine = formatPixLine();
-        let msg = (template || "Olá {nome}! Tudo bem? Passando para lembrar da cobrança da academia.\nChave Pix: {pix}")
-          .replaceAll("{nome}", alunoNome || "Aluno");
-
-        if (pixLine) {
-          if (msg.includes("{pix}")) {
-            msg = msg.replaceAll("{pix}", pixLine);
-          } else {
-            msg = `${msg}\nChave Pix: ${pixLine}`;
-          }
-        } else {
-          msg = msg
-            .replaceAll("\nChave Pix: {pix}", "")
-            .replaceAll("Chave Pix: {pix}", "")
-            .replaceAll("{pix}", "")
-            .trim();
-        }
-        return msg;
-      }
-
-      function openWhatsAppWithText(phoneDigits, finalText) {
-        const encoded = encodeURIComponent(finalText);
-        const url = phoneDigits ? `https://wa.me/${phoneDigits}?text=${encoded}` : `https://wa.me/?text=${encoded}`;
-        window.open(url, "_blank", "noopener");
-      }
-
-      function openWhatsAppSingle(aluno, customTemplate) {
-        const phone = cleanPhone(aluno.whatsapp);
-        const finalText = buildChargeMessage(customTemplate, aluno.nome);
-        openWhatsAppWithText(phone, finalText);
-      }
-
-      function openWhatsAppFesta(item) {
-        const evento = item.evento || "Festa / Evento da Academia";
-        const base = `Olá ${item.participante}! Passando para lembrar do pagamento referente ao evento "${evento}".\nChave Pix: {pix}`;
-        const finalText = buildChargeMessage(base, item.participante);
-        const phone = cleanPhone(item.whatsapp) || findAlunoPhoneByName(item.participante);
-        openWhatsAppWithText(phone, finalText);
-      }
-
-      function openWhatsAppGraduacao(item) {
-        const destino = item.faixaDestino || "próxima graduação";
-        const base = `Olá ${item.aluno}! Passando para lembrar da taxa/pagamento da graduação (${destino}).\nChave Pix: {pix}`;
-        const finalText = buildChargeMessage(base, item.aluno);
-        const phone = findAlunoPhoneByName(item.aluno);
-        openWhatsAppWithText(phone, finalText);
-      }
-
-      let auth = null;
-      let db = null;
-
-      try {
-        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-        auth = firebase.auth();
-        db = firebase.database();
-        setDiag("Conectado e pronto para entrar.");
-      } catch (e) {
-        setDiag("Modo local ativo: " + (e.message || e));
-      }
-
-      function dbPath(sub) {
-        return currentUser ? `academias/${currentUser.uid}/${sub}` : null;
-      }
-
-      function updateMenuSummary() {
-        const total = alunosCache.length;
-        const pagos = alunosCache.filter((a) => a.status === "pago").length;
-        const naoPagos = total - pagos;
-        document.getElementById("sumTotalAlunos").textContent = String(total);
-        document.getElementById("sumPagos").textContent = String(pagos);
-        document.getElementById("sumNaoPagos").textContent = String(naoPagos);
-        document.getElementById("countMenuAlunos").textContent = String(total);
-        document.getElementById("totalAlunosTitulo").textContent = String(total);
-      }
-
-      function syncAlunosViews() {
-        updateMenuSummary();
-        renderTodosAlunos();
-        renderRelatorio();
-      }
-
-      function renderTodosAlunos() {
-        updateMenuSummary();
-        const container = document.getElementById("listaTodosAlunos");
-        container.innerHTML = "";
-
-        if (!alunosCache.length) {
-          container.innerHTML = `<p class="desc">Nenhum aluno cadastrado ainda.</p>`;
-          return;
-        }
-
-        alunosCache.forEach((aluno) => {
-          const isPago = aluno.status === "pago";
-          const card = document.createElement("div");
-          card.className = "list-card";
-
-          const top = document.createElement("div");
-          top.className = "list-top";
-
-          const title = document.createElement("div");
-          title.className = "list-title";
-          title.textContent = aluno.nome;
-
-          const statusBtn = document.createElement("button");
-          statusBtn.type = "button";
-          statusBtn.className = `status-pill-btn ${isPago ? "pill-green" : "pill-red"}`;
-          statusBtn.textContent = isPago ? "Pago" : "Não Pago";
-          statusBtn.addEventListener("click", async () => {
-            const nextStatus = isPago ? "nao_pago" : "pago";
-            aluno.status = nextStatus;
-            persistLocalLists();
-            syncAlunosViews();
-            if (db && dbPath("alunos")) {
-              await db.ref(`${dbPath("alunos")}/${aluno.id}`).update({ status: nextStatus }).catch(() => {});
-            }
-          });
-
-          top.appendChild(title);
-          top.appendChild(statusBtn);
-
-          const meta = document.createElement("div");
-          meta.className = "list-meta";
-          meta.innerHTML = `
-            WhatsApp: <strong>${aluno.whatsapp || "Não informado"}</strong> • Modalidade: ${aluno.modalidade || "-"}<br/>
-            Peso: ${aluno.peso || "-"} • CEP: ${aluno.cep || "-"}<br/>
-            Endereço: ${aluno.endereco || "-"}
-          `;
-
-          const actions = document.createElement("div");
-          actions.className = "list-actions";
-
-          const btnWa = document.createElement("button");
-          btnWa.type = "button";
-          btnWa.className = "btn-wa btn-sm";
-          btnWa.textContent = "WhatsApp";
-          btnWa.addEventListener("click", () => openWhatsAppSingle(aluno, document.getElementById("msgCobranca").value));
-
-          const btnDel = document.createElement("button");
-          btnDel.type = "button";
-          btnDel.className = "btn-close-x btn-sm";
-          btnDel.textContent = "Excluir";
-          btnDel.addEventListener("click", async () => {
-            selecionadosRel.delete(aluno.id);
-            alunosCache = alunosCache.filter((a) => a.id !== aluno.id);
-            persistLocalLists();
-            syncAlunosViews();
-            if (db && dbPath("alunos")) {
-              await db.ref(`${dbPath("alunos")}/${aluno.id}`).remove().catch(() => {});
-            }
-          });
-
-          actions.appendChild(btnWa);
-          actions.appendChild(btnDel);
-
-          card.appendChild(top);
-          card.appendChild(meta);
-          card.appendChild(actions);
-          container.appendChild(card);
-        });
-      }
-
-      function updateRelatorioCounter() {
-        document.getElementById("qtdMarcadosRel").textContent = String(selecionadosRel.size);
-      }
-
-      function renderRelatorio() {
-        const pagos = alunosCache.filter((a) => a.status === "pago");
-        const naoPagos = alunosCache.filter((a) => a.status !== "pago");
-
-        document.getElementById("relTotal").textContent = String(alunosCache.length);
-        document.getElementById("relPagos").textContent = String(pagos.length);
-        document.getElementById("relNaoPagos").textContent = String(naoPagos.length);
-
-        let listaFiltrada = alunosCache;
-        if (filtroAtualRel === "pagos") listaFiltrada = pagos;
-        if (filtroAtualRel === "nao_pagos") listaFiltrada = naoPagos;
-
-        const container = document.getElementById("listaRelatorio");
-        container.innerHTML = "";
-
-        if (!listaFiltrada.length) {
-          container.innerHTML = `<p class="desc">Nenhum aluno neste filtro.</p>`;
-          updateRelatorioCounter();
-          return;
-        }
-
-        listaFiltrada.forEach((aluno) => {
-          const isPago = aluno.status === "pago";
-          const card = document.createElement("div");
-          card.className = "list-card";
-
-          const top = document.createElement("div");
-          top.className = "list-top";
-
-          const checkRow = document.createElement("div");
-          checkRow.className = "check-row";
-
-          const cb = document.createElement("input");
-          cb.type = "checkbox";
-          cb.className = "big-check";
-          cb.checked = selecionadosRel.has(aluno.id);
-          cb.addEventListener("change", () => {
-            if (cb.checked) selecionadosRel.add(aluno.id);
-            else selecionadosRel.delete(aluno.id);
-            updateRelatorioCounter();
-          });
-
-          const nameBox = document.createElement("div");
-          nameBox.innerHTML = `
-            <div class="list-title">${aluno.nome}</div>
-            <div class="list-meta">WA: ${aluno.whatsapp || "Sem número"}</div>
-          `;
-
-          checkRow.appendChild(cb);
-          checkRow.appendChild(nameBox);
-
-          const rightBox = document.createElement("div");
-          rightBox.style.display = "flex";
-          rightBox.style.gap = "6px";
-          rightBox.style.alignItems = "center";
-
-          const statusBtn = document.createElement("button");
-          statusBtn.type = "button";
-          statusBtn.className = `status-pill-btn ${isPago ? "pill-green" : "pill-red"}`;
-          statusBtn.textContent = isPago ? "Pago" : "Não Pago";
-          statusBtn.addEventListener("click", async () => {
-            const nextStatus = isPago ? "nao_pago" : "pago";
-            aluno.status = nextStatus;
-            persistLocalLists();
-            syncAlunosViews();
-            if (db && dbPath("alunos")) {
-              await db.ref(`${dbPath("alunos")}/${aluno.id}`).update({ status: nextStatus }).catch(() => {});
-            }
-          });
-
-          const waBtn = document.createElement("button");
-          waBtn.type = "button";
-          waBtn.className = "btn-wa btn-sm";
-          waBtn.textContent = "Cobrar WA";
-          waBtn.addEventListener("click", () => {
-            openWhatsAppSingle(aluno, document.getElementById("msgCobranca").value);
-          });
-
-          rightBox.appendChild(statusBtn);
-          rightBox.appendChild(waBtn);
-
-          top.appendChild(checkRow);
-          top.appendChild(rightBox);
-          card.appendChild(top);
-          container.appendChild(card);
-        });
-
-        updateRelatorioCounter();
-      }
-
-      function renderFestas() {
-        document.getElementById("totalFesta").textContent = String(festasCache.length);
-        const container = document.getElementById("listaFesta");
-        container.innerHTML = "";
-
-        if (!festasCache.length) {
-          container.innerHTML = `<p class="desc">Ninguém adicionado na lista de festas ainda.</p>`;
-          return;
-        }
-
-        festasCache.forEach((item) => {
-          const isPago = item.status === "pago";
-          const waNum = item.whatsapp || findAlunoPhoneByName(item.participante);
-          const card = document.createElement("div");
-          card.className = "list-card";
-
-          const top = document.createElement("div");
-          top.className = "list-top";
-
-          const info = document.createElement("div");
-          info.innerHTML = `
-            <div class="list-title">${item.participante}</div>
-            <div class="list-meta">WA: <strong>${waNum || "Não informado"}</strong> • Evento: ${item.evento || "Festa / Confraternização"}</div>
-          `;
-
-          const statusBtn = document.createElement("button");
-          statusBtn.type = "button";
-          statusBtn.className = `status-pill-btn ${isPago ? "pill-green" : "pill-red"}`;
-          statusBtn.textContent = isPago ? "Pago" : "Não Pago";
-          statusBtn.addEventListener("click", async () => {
-            const nextStatus = isPago ? "nao_pago" : "pago";
-            item.status = nextStatus;
-            persistLocalLists();
-            renderFestas();
-            if (db && dbPath("festas")) {
-              await db.ref(`${dbPath("festas")}/${item.id}`).update({ status: nextStatus }).catch(() => {});
-            }
-          });
-
-          top.appendChild(info);
-          top.appendChild(statusBtn);
-
-          const actions = document.createElement("div");
-          actions.className = "list-actions";
-
-          const waBtn = document.createElement("button");
-          waBtn.type = "button";
-          waBtn.className = "btn-wa btn-sm";
-          waBtn.textContent = "Cobrar Pix / WA";
-          waBtn.addEventListener("click", () => openWhatsAppFesta(item));
-
-          const delBtn = document.createElement("button");
-          delBtn.type = "button";
-          delBtn.className = "btn-close-x btn-sm";
-          delBtn.textContent = "Excluir";
-          delBtn.addEventListener("click", async () => {
-            festasCache = festasCache.filter((f) => f.id !== item.id);
-            persistLocalLists();
-            renderFestas();
-            if (db && dbPath("festas")) {
-              await db.ref(`${dbPath("festas")}/${item.id}`).remove().catch(() => {});
-            }
-          });
-
-          actions.appendChild(waBtn);
-          actions.appendChild(delBtn);
-
-          card.appendChild(top);
-          card.appendChild(actions);
-          container.appendChild(card);
-        });
-      }
-
-      function renderGraduacao() {
-        document.getElementById("totalGrad").textContent = String(gradCache.length);
-        const container = document.getElementById("listaGraduacao");
-        container.innerHTML = "";
-
-        if (!gradCache.length) {
-          container.innerHTML = `<p class="desc">Nenhum aluno na lista de graduação ainda.</p>`;
-          return;
-        }
-
-        gradCache.forEach((item) => {
-          const isPago = item.status === "pago";
-          const card = document.createElement("div");
-          card.className = "list-card";
-
-          const top = document.createElement("div");
-          top.className = "list-top";
-
-          const info = document.createElement("div");
-          info.innerHTML = `
-            <div class="list-title">${item.aluno}</div>
-            <div class="list-meta">Vai graduar para: <strong>${item.faixaDestino || "Próxima graduação"}</strong></div>
-          `;
-
-          const statusBtn = document.createElement("button");
-          statusBtn.type = "button";
-          statusBtn.className = `status-pill-btn ${isPago ? "pill-green" : "pill-red"}`;
-          statusBtn.textContent = isPago ? "Pago" : "Não Pago";
-          statusBtn.addEventListener("click", async () => {
-            const nextStatus = isPago ? "nao_pago" : "pago";
-            item.status = nextStatus;
-            persistLocalLists();
-            renderGraduacao();
-            if (db && dbPath("graduacao")) {
-              await db.ref(`${dbPath("graduacao")}/${item.id}`).update({ status: nextStatus }).catch(() => {});
-            }
-          });
-
-          top.appendChild(info);
-          top.appendChild(statusBtn);
-
-          const actions = document.createElement("div");
-          actions.className = "list-actions";
-
-          const waBtn = document.createElement("button");
-          waBtn.type = "button";
-          waBtn.className = "btn-wa btn-sm";
-          waBtn.textContent = "Cobrar Pix / WA";
-          waBtn.addEventListener("click", () => openWhatsAppGraduacao(item));
-
-          const delBtn = document.createElement("button");
-          delBtn.type = "button";
-          delBtn.className = "btn-close-x btn-sm";
-          delBtn.textContent = "Excluir";
-          delBtn.addEventListener("click", async () => {
-            gradCache = gradCache.filter((g) => g.id !== item.id);
-            persistLocalLists();
-            renderGraduacao();
-            if (db && dbPath("graduacao")) {
-              await db.ref(`${dbPath("graduacao")}/${item.id}`).remove().catch(() => {});
-            }
-          });
-
-          actions.appendChild(waBtn);
-          actions.appendChild(delBtn);
-
-          card.appendChild(top);
-          card.appendChild(actions);
-          container.appendChild(card);
-        });
-      }
-
-      document.getElementById("btnSalvarPix").addEventListener("click", async () => {
-        const chave = (pixChaveEl.value || "").trim();
-        const recebedor = (pixRecebedorEl.value || "").trim();
-
-        pixConfig = { chave, recebedor };
-        persistLocalLists();
-
-        pixMsgEl.className = "status-msg ok-msg";
-        pixMsgEl.textContent = chave ? "Chave Pix salva para mensalidades, festas e graduação!" : "Chave Pix limpa.";
-        setTimeout(() => { pixMsgEl.textContent = ""; }, 2500);
-
-        if (db && dbPath("pix")) {
-          await db.ref(dbPath("pix")).set(pixConfig).catch(() => {});
-        }
-      });
-
-      async function fazerLogin(usarSalva) {
-        authMsg.textContent = "";
-        let email = (emailEl.value || "").trim();
-        let senha = senhaEl.value || "";
-        let nomeAcad = (nomeAcademiaEl.value || "").trim();
-
-        if (usarSalva) {
-          const saved = readSavedCred();
-          if (!saved || !saved.email || !saved.senha) {
-            authMsg.textContent = "Nenhuma conta salva ainda.";
-            return;
-          }
-          email = saved.email;
-          senha = saved.senha;
-          nomeAcad = saved.nomeAcademia || "";
-          emailEl.value = email;
-          senhaEl.value = senha;
-        }
-
-        if (!email || !senha) {
-          authMsg.textContent = "Preencha o e-mail e a senha.";
-          setDiag("Faltou e-mail ou senha.");
-          return;
-        }
-
-        if (!auth) {
-          authMsg.textContent = "Conexão não iniciada. Recarregue a página.";
-          return;
-        }
-
-        setDiag("Entrando em " + email + "...");
-        try {
-          await auth.signInWithEmailAndPassword(email, senha);
-          saveCred(email, senha, nomeAcad);
-          setDiag("Entrada liberada!");
-        } catch (err) {
-          const msg = err && err.message ? err.message : "Erro ao entrar.";
-          authMsg.textContent = msg;
-          setDiag(msg);
-        }
-      }
-
-      document.getElementById("btnLogin").addEventListener("click", () => fazerLogin(false));
-      document.getElementById("btnEntrarRapido").addEventListener("click", () => fazerLogin(true));
-
-      document.getElementById("btnCriarConta").addEventListener("click", async () => {
-        authMsg.textContent = "";
-        const nomeAcad = (nomeAcademiaEl.value || "").trim() || "32 Academia";
-        const email = (emailEl.value || "").trim();
-        const senha = senhaEl.value || "";
-
-        if (!email || !senha) {
-          authMsg.textContent = "Preencha o e-mail e a senha.";
-          setDiag("Faltou e-mail ou senha.");
-          return;
-        }
-        if (!auth) return;
-
-        setDiag("Criando conta para " + email + "...");
-        try {
-          const cred = await auth.createUserWithEmailAndPassword(email, senha);
-          if (db && cred.user) {
-            await db.ref(`academias/${cred.user.uid}/perfil`).set({
-              nomeAcademia: nomeAcad,
-              criadoEm: Date.now()
-            }).catch(() => {});
-          }
-          saveCred(email, senha, nomeAcad);
-          setDiag("Conta criada!");
-        } catch (err) {
-          const msg = err && err.message ? err.message : "Erro ao criar conta.";
-          authMsg.textContent = msg;
-          setDiag(msg);
-        }
-      });
-
-      btnLogout.addEventListener("click", async () => {
-        persistLocalLists();
-        selecionadosRel.clear();
-        if (auth) await auth.signOut().catch(() => {});
-        loadSavedCredIntoInputs();
-        setDiag("Você saiu da conta. Dados salvos.");
-      });
-
-      document.getElementById("btnCriarAluno").addEventListener("click", async () => {
-        const msgEl = document.getElementById("alunoMsg");
-        msgEl.className = "status-msg";
-        msgEl.textContent = "";
-
-        const nome = (document.getElementById("alunoNome").value || "").trim();
-        const whatsapp = (document.getElementById("alunoWhatsapp").value || "").trim();
-        const endereco = (document.getElementById("alunoEndereco").value || "").trim();
-        const cep = (document.getElementById("alunoCep").value || "").trim();
-        const peso = (document.getElementById("alunoPeso").value || "").trim();
-        const modalidade = (document.getElementById("alunoModalidade").value || "").trim();
-        const status = document.getElementById("alunoStatus").value;
-
-        if (!nome) {
-          msgEl.textContent = "Digite o nome do aluno.";
-          return;
-        }
-
-        const novoAluno = { id: "aluno_" + Date.now(), nome, whatsapp, endereco, cep, peso, modalidade, status, criadoEm: Date.now() };
-        alunosCache = [...alunosCache, novoAluno];
-        persistLocalLists();
-        syncAlunosViews();
-
-        document.getElementById("alunoNome").value = "";
-        document.getElementById("alunoWhatsapp").value = "";
-        document.getElementById("alunoEndereco").value = "";
-        document.getElementById("alunoCep").value = "";
-        document.getElementById("alunoPeso").value = "";
-        document.getElementById("alunoModalidade").value = "";
-
-        msgEl.className = "status-msg ok-msg";
-        msgEl.textContent = "Aluno criado e salvo!";
-        setTimeout(() => { msgEl.textContent = ""; }, 2500);
-
-        if (db && dbPath("alunos")) {
-          const refPush = db.ref(dbPath("alunos")).push();
-          const oldId = novoAluno.id;
-          novoAluno.id = refPush.key;
-          alunosCache = alunosCache.map((a) => (a.id === oldId ? novoAluno : a));
-          persistLocalLists();
-          await refPush.set({ nome, whatsapp, endereco, cep, peso, modalidade, status, criadoEm: novoAluno.criadoEm }).catch(() => {});
-        }
-      });
-
-      document.getElementById("filtroTodos").addEventListener("click", () => { filtroAtualRel = "todos"; renderRelatorio(); });
-      document.getElementById("filtroNaoPagos").addEventListener("click", () => { filtroAtualRel = "nao_pagos"; renderRelatorio(); });
-      document.getElementById("filtroPagos").addEventListener("click", () => { filtroAtualRel = "pagos"; renderRelatorio(); });
-
-      document.getElementById("btnMarcarNaoPagos").addEventListener("click", () => {
-        selecionadosRel = new Set(alunosCache.filter((a) => a.status !== "pago").map((a) => a.id));
-        renderRelatorio();
-      });
-
-      document.getElementById("btnMarcarTodosRel").addEventListener("click", () => {
-        selecionadosRel = new Set(alunosCache.map((a) => a.id));
-        renderRelatorio();
-      });
-
-      document.getElementById("btnLimparMarcacaoRel").addEventListener("click", () => {
-        selecionadosRel.clear();
-        renderRelatorio();
-      });
-
-      document.getElementById("btnDispararWhatsAppRel").addEventListener("click", async () => {
-        const escolhidos = alunosCache.filter((a) => selecionadosRel.has(a.id));
-        if (!escolhidos.length) {
-          alert("Marque pelo menos um aluno para enviar cobrança no WhatsApp.");
-          return;
-        }
-        const tpl = (document.getElementById("msgCobranca").value || "").trim();
-        if (escolhidos.length === 1) {
-          openWhatsAppSingle(escolhidos[0], tpl);
-          return;
-        }
-        const pixLine = formatPixLine();
-        const lista = escolhidos.map((a) => `• ${a.nome} (${a.whatsapp || "sem WA"})`).join("\n");
-        const baseLote = buildChargeMessage(tpl, "pessoal");
-        const textoLote = pixLine
-          ? `${baseLote}\n\nLista selecionada:\n${lista}`
-          : `${baseLote}\n\nLista selecionada:\n${lista}`;
-        try { if (navigator.clipboard && navigator.clipboard.writeText) await navigator.clipboard.writeText(textoLote); } catch (_) {}
-        window.open(`https://wa.me/?text=${encodeURIComponent(textoLote)}`, "_blank", "noopener");
-      });
-
-      document.getElementById("btnAddFesta").addEventListener("click", async () => {
-        const msgEl = document.getElementById("festaMsg");
-        msgEl.className = "status-msg";
-        msgEl.textContent = "";
-
-        const evento = (document.getElementById("festaNomeEvento").value || "").trim();
-        const participante = (festaNomeEl.value || "").trim();
-        const whatsapp = (festaWaEl.value || "").trim() || findAlunoPhoneByName(participante);
-        const status = document.getElementById("festaStatus").value;
-
-        if (!participante) {
-          msgEl.textContent = "Digite o nome do participante.";
-          return;
-        }
-
-        const novoItem = { id: "festa_" + Date.now(), evento, participante, whatsapp, status, criadoEm: Date.now() };
-        festasCache = [...festasCache, novoItem];
-        persistLocalLists();
-        renderFestas();
-
-        festaNomeEl.value = "";
-        festaWaEl.value = "";
-        msgEl.className = "status-msg ok-msg";
-        msgEl.textContent = "Participante adicionado e salvo!";
-        setTimeout(() => { msgEl.textContent = ""; }, 2000);
-
-        if (db && dbPath("festas")) {
-          const refPush = db.ref(dbPath("festas")).push();
-          const oldId = novoItem.id;
-          novoItem.id = refPush.key;
-          festasCache = festasCache.map((f) => (f.id === oldId ? novoItem : f));
-          persistLocalLists();
-          await refPush.set({ evento, participante, whatsapp, status, criadoEm: novoItem.criadoEm }).catch(() => {});
-        }
-      });
-
-      document.getElementById("btnAddGraduacao").addEventListener("click", async () => {
-        const msgEl = document.getElementById("gradMsg");
-        msgEl.className = "status-msg";
-        msgEl.textContent = "";
-
-        const aluno = (document.getElementById("gradAlunoNome").value || "").trim();
-        const faixaDestino = (document.getElementById("gradFaixaDestino").value || "").trim();
-        const status = document.getElementById("gradStatus").value;
-
-        if (!aluno) {
-          msgEl.textContent = "Digite o nome do aluno que vai graduar.";
-          return;
-        }
-
-        const novoItem = { id: "grad_" + Date.now(), aluno, faixaDestino, status, criadoEm: Date.now() };
-        gradCache = [...gradCache, novoItem];
-        persistLocalLists();
-        renderGraduacao();
-
-        document.getElementById("gradAlunoNome").value = "";
-        document.getElementById("gradFaixaDestino").value = "";
-        msgEl.className = "status-msg ok-msg";
-        msgEl.textContent = "Aluno salvo na lista de graduação!";
-        setTimeout(() => { msgEl.textContent = ""; }, 2000);
-
-        if (db && dbPath("graduacao")) {
-          const refPush = db.ref(dbPath("graduacao")).push();
-          const oldId = novoItem.id;
-          novoItem.id = refPush.key;
-          gradCache = gradCache.map((g) => (g.id === oldId ? novoItem : g));
-          persistLocalLists();
-          await refPush.set({ aluno, faixaDestino, status, criadoEm: novoItem.criadoEm }).catch(() => {});
-        }
-      });
-
-      loadSavedCredIntoInputs();
-      hydrateLocalLists("global");
-
-      if (auth) {
-        auth.onAuthStateChanged((user) => {
-          currentUser = user;
-          if (user) {
-            hydrateLocalLists(user.uid);
-            persistLocalLists();
-            authSection.classList.add("hidden");
-            btnLogout.classList.remove("hidden");
-            headerUser.textContent = user.email || "Conectado";
-            showScreen("menuSection");
-
-            if (db) {
-              db.ref(`academias/${user.uid}/pix`).on("value", (snap) => {
-                const val = snap.val();
-                if (val && typeof val === "object" && (val.chave || val.recebedor)) {
-                  pixConfig = { chave: val.chave || "", recebedor: val.recebedor || "" };
-                  syncPixInputs();
-                  persistLocalLists();
-                }
-              });
-
-              db.ref(`academias/${user.uid}/perfil`).on("value", (snap) => {
-                const perfil = snap.val();
-                if (perfil && perfil.nomeAcademia) {
-                  headerTitle.textContent = perfil.nomeAcademia;
-                  emblemFooterLabel.textContent = `${perfil.nomeAcademia.toUpperCase()} • GESTÃO DE ALUNOS`;
-                  persistLocalLists();
-                }
-              });
-
-              db.ref(`academias/${user.uid}/alunos`).on("value", (snap) => {
-                const data = snap.val();
-                if (data && typeof data === "object") {
-                  const remoteList = Object.entries(data).map(([id, val]) => ({ id, ...val }));
-                  if (remoteList.length > 0 || alunosCache.length === 0) {
-                    alunosCache = remoteList;
-                    persistLocalLists();
-                    syncAlunosViews();
-                  }
-                }
-              });
-
-              db.ref(`academias/${user.uid}/festas`).on("value", (snap) => {
-                const data = snap.val();
-                if (data && typeof data === "object") {
-                  const remoteList = Object.entries(data).map(([id, val]) => ({ id, ...val }));
-                  if (remoteList.length > 0 || festasCache.length === 0) {
-                    festasCache = remoteList;
-                    persistLocalLists();
-                    renderFestas();
-                  }
-                }
-              });
-
-              db.ref(`academias/${user.uid}/graduacao`).on("value", (snap) => {
-                const data = snap.val();
-                if (data && typeof data === "object") {
-                  const remoteList = Object.entries(data).map(([id, val]) => ({ id, ...val }));
-                  if (remoteList.length > 0 || gradCache.length === 0) {
-                    gradCache = remoteList;
-                    persistLocalLists();
-                    renderGraduacao();
-                  }
-                }
-              });
-            }
-          } else {
-            hydrateLocalLists("global");
-            authSection.classList.remove("hidden");
-            menuSection.classList.add("hidden");
-            subViews.forEach((id) => document.getElementById(id).classList.add("hidden"));
-            btnLogout.classList.add("hidden");
-            headerTitle.textContent = "32 Academia";
-            headerUser.textContent = "Sistema de Gestão";
-            emblemFooterLabel.textContent = "32 ACADEMIA • GESTÃO DE ALUNOS";
-            loadSavedCredIntoInputs();
-          }
-        });
-      }
-    })();
-  </script>
-</body>
-</html>
+    <!-- 6. BOTÃO ENTRADAS / TUDO QUE ENTROU -->
+    <section id="viewEntradas" class="card hidden">
+      <div class="section-header">
+        <h2>Entradas / Tudo que Entrou</h2>
+        <button type="button" class="btn-close-x" data-back="menuSection">✕ Sair</button>
+      </div>
+
+      <div class="month-bar">
+        <label for="mesEntradas" style="margin-top:0;">Consultar Mês</label>
+        <input id="mesEntradas" type="month" data-sync-month="true" />
+      </div>
+
+      <div class="finance-box">
+        <div>
+          <div class="finance-label">Total que Entrou no Mês</div>
+          <div class="finance-val in" id="totalEntradasDisplay">R$ 0,00</div>
+        </div>
+      </div>
+
+      <label for="entradaOrigem">Origem / Descrição da Entrada</label>
+      <input id="entradaOrigem" type="text" placeholder="Ex.: Pagamento Mensalidade / Evento / Kimono" />
+
+      <div class="row-2">
+        <div>
+          <label for="entradaValor">Valor (R$)</label>
+          <input id="entradaValor" type="number" step="0.01" min="0" placeholder="Ex.: 120.00" />
+        </div>
+        <div>
+          <label for="entradaData">Data</label>
+          <input id="entradaData" type="date" />
+        </div>
+      </div>
+
+      <label for="entradaStatus">Situação</label>
+      <select id="entradaStatus">
+        <option value="pago">Entrou / Pago (Verde)</option>
+        <option value="nao_pago">A Receber / Não Pago (Vermelho)</option>
+      </select>
+
+      <button id="btnAddEntrada" class="btn-primary" type="button">Registrar Entrada</button>
+      <div id="entradaMsg" class="status-msg"></div>
+
+      <h3 style="margin-top:16px;">Lançamentos do Mês (<span id="qtdEntradas">0</span>)</h3>
+      <div id="listaEntradas"></div>
+
+      <button type="button" class="btn-exit-bottom" data-back="menuSection">Sair / Voltar aos Botões</button>
+    </section>
+
+    <!-- 7. BOTÃO DESPESAS -->
+    <section id="viewDespesas" class="card hidden">
+      <div class="section-header">
+        <h2>Despesas da Academia</h2>
+        <button type="button" class="btn-close-x" data-back="menuSection">✕ Sair</button>
+      </div>
+
+      <div class="month-bar">
+        <label for="mesDespesas" style="margin-top:0;">Consultar Mês</label>
+        <input id="mesDespesas" type="month" data-sync-month="true" />
+      </div>
+
+      <div class="finance-box">
+        <div>
+          <div class="finance-label">Total de Despesas no Mês</div>
+          <div class="finance-val out" id="totalDespesasDisplay">R$ 0,00</div>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <button type="button" class="btn-close-x btn-sm" data-despesa-preset="Aluguel">Aluguel</button>
+        <button type="button" class="btn-close-x btn-sm" data-despesa-preset="Água">Água</button>
+        <button type="button" class="btn-close-x btn-sm" data-despesa-preset="Luz">Luz</button>
+        <button type="button" class="btn-close-x btn-sm" data-despesa-preset="Insumos">Insumos</button>
+      </div>
+
+      <label for="despesaDescricao">Descrição da Despesa (Aluguel, Água, Luz, Insumos...)</label>
+      <input id="despesaDescricao" type="text" placeholder="Ex.: Aluguel / Conta de Luz / Insumos" />
+
+      <div class="row-2">
+        <div>
+          <label for="despesaValor">Valor (R$)</label>
+          <input id="despesaValor" type="number" step="0.01" min="0" placeholder="Ex.: 850.00" />
+        </div>
+        <div>
+          <label for="despesaData">Data</label>
+          <input id="despesaData" type="date" />
+        </div>
+      </div>
+
+      <label for="despesaStatus">Situação</label>
+      <select id="despesaStatus">
+        <option value="pago">Pago (Verde)</option>
+        <option value="nao_pago">Não Pago (Vermelho)</option>
+      </select>
+
+      <button id="btnAddDespesa" class="btn-primary" type="button">Salvar Despesa</button>
+      <div id="despesaMsg" class="status-msg"></div>
+
+      <h3 style="margin-top:16px;">Despesas do Mês (<span id="qtdDespesas">0</span>)</h3>
+      <div id="listaDespesas"></div>
+
+      <button type="button" class="btn-exit-bottom" data-back="menuSection">Sair / Voltar aos Botões</button>
+    </section>
+
+    <!-- 8. BOTÃO FATURAMENTO E LUCRO -->
+    <section id="viewBalanco" class="card hidden">
+      <div class="section-header">
+        <h2>Faturamento e Lucro</h2>
+        <button type="button" class="btn-close-x" data-back="menuSection">✕ Sair</button>
+      </div>
+
+      <div class="month-bar">
+        <label for="mesBalanco" style="margin-top:0;">Escolha o Mês para Consultar</label>
+        <input id="mesBalanco" type="month" data-sync-month="true" />
+      </div>
+
+      <p class="desc">Cálculo do mês escolhido: tudo que entrou menos o que saiu nas despesas.</p>
+
+      <div class="finance-grid">
+        <div class="finance-box">
+          <div>
+            <div class="finance-label">Tudo que Entrou no Mês</div>
+            <div class="desc">Entradas lançadas e marcadas como pagas</div>
+          </div>
+          <div class="finance-val in" id="balancoEntradas">R$ 0,00</div>
+        </div>
+
+        <div class="finance-box">
+          <div>
+            <div class="finance-label">Tudo que Saiu (Despesas do Mês)</div>
+            <div class="desc">Aluguel, água, luz, insumos e outros</div>
+          </div>
+          <div class="finance-val out" id="balancoDespesas">R$ 0,00</div>
+        </div>
+
+        <div class="finance-box">
+          <div>
+            <div class="finance-label" id="balancoResultadoTitulo">Lucro Líquido do Mês</div>
+            <div class="desc">Entradas menos despesas</div>
+          </div>
+          <div class="finance-val profit" id="
