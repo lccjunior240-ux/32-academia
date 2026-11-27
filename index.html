@@ -120,7 +120,7 @@
       border-color: var(--navy-2);
       box-shadow: 0 0 0 3px rgba(22, 40, 68, 0.12);
     }
-    textarea { min-height: 78px; resize: vertical; }
+    textarea { min-height: 86px; resize: vertical; }
 
     .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
@@ -208,6 +208,14 @@
     .pill-green:hover { background: var(--green); }
     .pill-red { background: var(--red-dark); box-shadow: 0 2px 6px rgba(185, 28, 28, 0.25); }
     .pill-red:hover { background: var(--red); }
+
+    .pix-box {
+      background: #f8fafc;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 14px;
+      padding: 13px;
+      margin-bottom: 12px;
+    }
 
     .summary-strip {
       display: grid;
@@ -533,6 +541,20 @@
         <button type="button" class="btn-close-x" data-back="menuSection">✕ Sair</button>
       </div>
 
+      <div class="pix-box">
+        <h3>Chave Pix do Dono da Academia</h3>
+        <p class="desc">Ao enviar a cobrança, a chave Pix vai junto na mensagem do WhatsApp usando <code>{pix}</code>.</p>
+
+        <label for="pixChaveInput">Chave Pix (CPF, CNPJ, E-mail, Celular ou Aleatória)</label>
+        <input id="pixChaveInput" type="text" placeholder="Ex.: 53999999999 ou pix@academia.com" />
+
+        <label for="pixRecebedorInput">Nome do Recebedor (opcional)</label>
+        <input id="pixRecebedorInput" type="text" placeholder="Ex.: Natália Contreira / 32 Academia" />
+
+        <button type="button" id="btnSalvarPix" class="btn-primary" style="margin-top:12px;">Salvar Chave Pix</button>
+        <div id="pixMsg" class="status-msg"></div>
+      </div>
+
       <div class="toolbar">
         <button type="button" id="filtroTodos" class="btn-close-x btn-sm">Todos (<span id="relTotal">0</span>)</button>
         <button type="button" id="filtroNaoPagos" class="btn-sm pill-red">Não Pagos (<span id="relNaoPagos">0</span>)</button>
@@ -540,7 +562,8 @@
       </div>
 
       <label for="msgCobranca">Mensagem de Cobrança (WhatsApp)</label>
-      <textarea id="msgCobranca">Olá {nome}! Tudo bem? Passando para lembrar da mensalidade da academia que está em aberto.</textarea>
+      <textarea id="msgCobranca">Olá {nome}! Tudo bem? Passando para lembrar da mensalidade da academia que está em aberto.
+Chave Pix: {pix}</textarea>
 
       <div class="toolbar">
         <button type="button" id="btnMarcarNaoPagos" class="btn-close-x btn-sm">Marcar Todos Não Pagos</button>
@@ -630,7 +653,6 @@
 
   <script>
     (function () {
-      // Configura Manifest (PWA) e Service Worker para permitir "Instalar aplicativo" no Chrome
       try {
         const iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"><rect width="192" height="192" rx="40" fill="#0b1526"/><rect x="14" y="14" width="164" height="164" rx="30" fill="none" stroke="#c87d4b" stroke-width="6"/><text x="96" y="108" text-anchor="middle" font-family="system-ui,sans-serif" font-style="italic" font-weight="900" font-size="68" fill="#ffffff">32</text><text x="96" y="146" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="800" font-size="22" fill="#c87d4b">ACADEMIA</text></svg>`;
         const iconUrl = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(iconSvg);
@@ -711,6 +733,10 @@
       const savedAccountBox = document.getElementById("savedAccountBox");
       const savedEmailLabel = document.getElementById("savedEmailLabel");
 
+      const pixChaveEl = document.getElementById("pixChaveInput");
+      const pixRecebedorEl = document.getElementById("pixRecebedorInput");
+      const pixMsgEl = document.getElementById("pixMsg");
+
       const subViews = ["viewAddAluno", "viewTodosAlunos", "viewRelatorio", "viewFestas", "viewGraduacao"];
 
       let currentUser = null;
@@ -718,6 +744,7 @@
       let alunosCache = [];
       let festasCache = [];
       let gradCache = [];
+      let pixConfig = { chave: "", recebedor: "" };
       let filtroAtualRel = "todos";
       let selecionadosRel = new Set();
 
@@ -773,11 +800,17 @@
         } catch (_) {}
       }
 
+      function syncPixInputs() {
+        if (pixChaveEl) pixChaveEl.value = pixConfig.chave || "";
+        if (pixRecebedorEl) pixRecebedorEl.value = pixConfig.recebedor || "";
+      }
+
       function persistLocalLists() {
         const payload = {
           alunos: alunosCache,
           festas: festasCache,
           graduacao: gradCache,
+          pix: pixConfig,
           nomeAcademia: (nomeAcademiaEl.value || "").trim(),
           updatedAt: Date.now()
         };
@@ -791,13 +824,18 @@
         activeScopeKey = scope || "global";
         const scoped = activeScopeKey !== "global" ? readBundle(activeScopeKey) : null;
         const globalData = readBundle("global");
-        const chosen = (scoped && ((scoped.alunos && scoped.alunos.length) || (scoped.festas && scoped.festas.length) || (scoped.graduacao && scoped.graduacao.length)))
+        const chosen = (scoped && ((scoped.alunos && scoped.alunos.length) || (scoped.festas && scoped.festas.length) || (scoped.graduacao && scoped.graduacao.length) || (scoped.pix && scoped.pix.chave)))
           ? scoped
           : (globalData || scoped || {});
 
         alunosCache = Array.isArray(chosen.alunos) ? chosen.alunos : [];
         festasCache = Array.isArray(chosen.festas) ? chosen.festas : [];
         gradCache = Array.isArray(chosen.graduacao) ? chosen.graduacao : [];
+        pixConfig = (chosen.pix && typeof chosen.pix === "object")
+          ? { chave: chosen.pix.chave || "", recebedor: chosen.pix.recebedor || "" }
+          : { chave: "", recebedor: "" };
+        syncPixInputs();
+
         if (chosen.nomeAcademia) {
           headerTitle.textContent = chosen.nomeAcademia;
           emblemFooterLabel.textContent = `${chosen.nomeAcademia.toUpperCase()} • GESTÃO DE ALUNOS`;
@@ -832,10 +870,38 @@
         return digits;
       }
 
+      function formatPixLine() {
+        const chave = (pixConfig.chave || "").trim();
+        const rec = (pixConfig.recebedor || "").trim();
+        if (!chave) return "";
+        return rec ? `${chave} (${rec})` : chave;
+      }
+
+      function buildChargeMessage(template, alunoNome) {
+        const pixLine = formatPixLine();
+        let msg = (template || "Olá {nome}! Tudo bem? Passando para lembrar da mensalidade da academia que está em aberto.\nChave Pix: {pix}")
+          .replaceAll("{nome}", alunoNome || "Aluno");
+
+        if (pixLine) {
+          if (msg.includes("{pix}")) {
+            msg = msg.replaceAll("{pix}", pixLine);
+          } else {
+            msg = `${msg}\nChave Pix: ${pixLine}`;
+          }
+        } else {
+          msg = msg
+            .replaceAll("\nChave Pix: {pix}", "")
+            .replaceAll("Chave Pix: {pix}", "")
+            .replaceAll("{pix}", "")
+            .trim();
+        }
+        return msg;
+      }
+
       function openWhatsAppSingle(aluno, customTemplate) {
         const phone = cleanPhone(aluno.whatsapp);
-        const tpl = customTemplate || "Olá {nome}! Mensagem da 32 Academia.";
-        const text = encodeURIComponent(tpl.replaceAll("{nome}", aluno.nome || "Aluno"));
+        const finalText = buildChargeMessage(customTemplate, aluno.nome);
+        const text = encodeURIComponent(finalText);
         const url = phone ? `https://wa.me/${phone}?text=${text}` : `https://wa.me/?text=${text}`;
         window.open(url, "_blank", "noopener");
       }
@@ -927,7 +993,7 @@
           btnWa.type = "button";
           btnWa.className = "btn-wa btn-sm";
           btnWa.textContent = "WhatsApp";
-          btnWa.addEventListener("click", () => openWhatsAppSingle(aluno));
+          btnWa.addEventListener("click", () => openWhatsAppSingle(aluno, document.getElementById("msgCobranca").value));
 
           const btnDel = document.createElement("button");
           btnDel.type = "button";
@@ -1177,6 +1243,23 @@
         });
       }
 
+      // SALVAR CHAVE PIX DO DONO DA ACADEMIA
+      document.getElementById("btnSalvarPix").addEventListener("click", async () => {
+        const chave = (pixChaveEl.value || "").trim();
+        const recebedor = (pixRecebedorEl.value || "").trim();
+
+        pixConfig = { chave, recebedor };
+        persistLocalLists();
+
+        pixMsgEl.className = "status-msg ok-msg";
+        pixMsgEl.textContent = chave ? "Chave Pix salva para as cobranças!" : "Chave Pix limpa.";
+        setTimeout(() => { pixMsgEl.textContent = ""; }, 2500);
+
+        if (db && dbPath("pix")) {
+          await db.ref(dbPath("pix")).set(pixConfig).catch(() => {});
+        }
+      });
+
       async function fazerLogin(usarSalva) {
         authMsg.textContent = "";
         let email = (emailEl.value || "").trim();
@@ -1335,8 +1418,12 @@
           openWhatsAppSingle(escolhidos[0], tpl);
           return;
         }
+        const pixLine = formatPixLine();
         const lista = escolhidos.map((a) => `• ${a.nome} (${a.whatsapp || "sem WA"})`).join("\n");
-        const textoLote = `${tpl.replaceAll("{nome}", "pessoal")}\n\nLista selecionada:\n${lista}`;
+        const baseLote = buildChargeMessage(tpl, "pessoal");
+        const textoLote = pixLine
+          ? `${baseLote}\n\nLista selecionada:\n${lista}`
+          : `${baseLote}\n\nLista selecionada:\n${lista}`;
         try { if (navigator.clipboard && navigator.clipboard.writeText) await navigator.clipboard.writeText(textoLote); } catch (_) {}
         window.open(`https://wa.me/?text=${encodeURIComponent(textoLote)}`, "_blank", "noopener");
       });
@@ -1425,6 +1512,15 @@
             showScreen("menuSection");
 
             if (db) {
+              db.ref(`academias/${user.uid}/pix`).on("value", (snap) => {
+                const val = snap.val();
+                if (val && typeof val === "object" && (val.chave || val.recebedor)) {
+                  pixConfig = { chave: val.chave || "", recebedor: val.recebedor || "" };
+                  syncPixInputs();
+                  persistLocalLists();
+                }
+              });
+
               db.ref(`academias/${user.uid}/perfil`).on("value", (snap) => {
                 const perfil = snap.val();
                 if (perfil && perfil.nomeAcademia) {
