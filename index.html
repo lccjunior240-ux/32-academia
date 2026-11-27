@@ -444,7 +444,7 @@
             <span class="menu-icon">🎉</span>
             <span>
               <span class="menu-title">Festas, Aniversários e Eventos</span>
-              <span class="menu-sub">Lista separada de participantes (Pago ou Não Pago)</span>
+              <span class="menu-sub">Participantes com WhatsApp, situação e cobrança Pix</span>
             </span>
           </span>
           <span class="menu-arrow">›</span>
@@ -543,7 +543,7 @@
 
       <div class="pix-box">
         <h3>Chave Pix do Dono da Academia</h3>
-        <p class="desc">Ao enviar a cobrança, a chave Pix vai junto na mensagem do WhatsApp usando <code>{pix}</code>.</p>
+        <p class="desc">Salve a chave Pix uma vez: ela entra automaticamente nas cobranças de mensalidade, festas/eventos e graduação.</p>
 
         <label for="pixChaveInput">Chave Pix (CPF, CNPJ, E-mail, Celular ou Aleatória)</label>
         <input id="pixChaveInput" type="text" placeholder="Ex.: 53999999999 ou pix@academia.com" />
@@ -596,13 +596,16 @@ Chave Pix: {pix}</textarea>
           <input id="festaParticipante" type="text" placeholder="Nome de quem vai" />
         </div>
         <div>
-          <label for="festaStatus">Situação</label>
-          <select id="festaStatus">
-            <option value="nao_pago">Não Pago (Vermelho)</option>
-            <option value="pago">Pago (Verde)</option>
-          </select>
+          <label for="festaWhatsapp">WhatsApp do Participante</label>
+          <input id="festaWhatsapp" type="tel" placeholder="Ex.: 53999999999" />
         </div>
       </div>
+
+      <label for="festaStatus">Situação</label>
+      <select id="festaStatus">
+        <option value="nao_pago">Não Pago (Vermelho)</option>
+        <option value="pago">Pago (Verde)</option>
+      </select>
 
       <button id="btnAddFesta" class="btn-primary" type="button">Adicionar na Lista da Festa</button>
       <div id="festaMsg" class="status-msg"></div>
@@ -737,6 +740,9 @@ Chave Pix: {pix}</textarea>
       const pixRecebedorEl = document.getElementById("pixRecebedorInput");
       const pixMsgEl = document.getElementById("pixMsg");
 
+      const festaNomeEl = document.getElementById("festaParticipante");
+      const festaWaEl = document.getElementById("festaWhatsapp");
+
       const subViews = ["viewAddAluno", "viewTodosAlunos", "viewRelatorio", "viewFestas", "viewGraduacao"];
 
       let currentUser = null;
@@ -870,6 +876,27 @@ Chave Pix: {pix}</textarea>
         return digits;
       }
 
+      function findAlunoPhoneByName(name) {
+        const target = (name || "").trim().toLowerCase();
+        if (!target) return "";
+        const found = alunosCache.find((a) => (a.nome || "").trim().toLowerCase() === target);
+        return found ? cleanPhone(found.whatsapp) : "";
+      }
+
+      // Preenche o WhatsApp automaticamente se o participante digitado já for aluno cadastrado
+      if (festaNomeEl && festaWaEl) {
+        festaNomeEl.addEventListener("input", () => {
+          if (!festaWaEl.value.trim()) {
+            const matched = alunosCache.find(
+              (a) => (a.nome || "").trim().toLowerCase() === festaNomeEl.value.trim().toLowerCase()
+            );
+            if (matched && matched.whatsapp) {
+              festaWaEl.value = matched.whatsapp;
+            }
+          }
+        });
+      }
+
       function formatPixLine() {
         const chave = (pixConfig.chave || "").trim();
         const rec = (pixConfig.recebedor || "").trim();
@@ -879,7 +906,7 @@ Chave Pix: {pix}</textarea>
 
       function buildChargeMessage(template, alunoNome) {
         const pixLine = formatPixLine();
-        let msg = (template || "Olá {nome}! Tudo bem? Passando para lembrar da mensalidade da academia que está em aberto.\nChave Pix: {pix}")
+        let msg = (template || "Olá {nome}! Tudo bem? Passando para lembrar da cobrança da academia.\nChave Pix: {pix}")
           .replaceAll("{nome}", alunoNome || "Aluno");
 
         if (pixLine) {
@@ -898,12 +925,32 @@ Chave Pix: {pix}</textarea>
         return msg;
       }
 
+      function openWhatsAppWithText(phoneDigits, finalText) {
+        const encoded = encodeURIComponent(finalText);
+        const url = phoneDigits ? `https://wa.me/${phoneDigits}?text=${encoded}` : `https://wa.me/?text=${encoded}`;
+        window.open(url, "_blank", "noopener");
+      }
+
       function openWhatsAppSingle(aluno, customTemplate) {
         const phone = cleanPhone(aluno.whatsapp);
         const finalText = buildChargeMessage(customTemplate, aluno.nome);
-        const text = encodeURIComponent(finalText);
-        const url = phone ? `https://wa.me/${phone}?text=${text}` : `https://wa.me/?text=${text}`;
-        window.open(url, "_blank", "noopener");
+        openWhatsAppWithText(phone, finalText);
+      }
+
+      function openWhatsAppFesta(item) {
+        const evento = item.evento || "Festa / Evento da Academia";
+        const base = `Olá ${item.participante}! Passando para lembrar do pagamento referente ao evento "${evento}".\nChave Pix: {pix}`;
+        const finalText = buildChargeMessage(base, item.participante);
+        const phone = cleanPhone(item.whatsapp) || findAlunoPhoneByName(item.participante);
+        openWhatsAppWithText(phone, finalText);
+      }
+
+      function openWhatsAppGraduacao(item) {
+        const destino = item.faixaDestino || "próxima graduação";
+        const base = `Olá ${item.aluno}! Passando para lembrar da taxa/pagamento da graduação (${destino}).\nChave Pix: {pix}`;
+        const finalText = buildChargeMessage(base, item.aluno);
+        const phone = findAlunoPhoneByName(item.aluno);
+        openWhatsAppWithText(phone, finalText);
       }
 
       let auth = null;
@@ -1125,6 +1172,7 @@ Chave Pix: {pix}</textarea>
 
         festasCache.forEach((item) => {
           const isPago = item.status === "pago";
+          const waNum = item.whatsapp || findAlunoPhoneByName(item.participante);
           const card = document.createElement("div");
           card.className = "list-card";
 
@@ -1134,12 +1182,8 @@ Chave Pix: {pix}</textarea>
           const info = document.createElement("div");
           info.innerHTML = `
             <div class="list-title">${item.participante}</div>
-            <div class="list-meta">Evento: ${item.evento || "Festa / Confraternização"}</div>
+            <div class="list-meta">WA: <strong>${waNum || "Não informado"}</strong> • Evento: ${item.evento || "Festa / Confraternização"}</div>
           `;
-
-          const btns = document.createElement("div");
-          btns.style.display = "flex";
-          btns.style.gap = "6px";
 
           const statusBtn = document.createElement("button");
           statusBtn.type = "button";
@@ -1155,6 +1199,18 @@ Chave Pix: {pix}</textarea>
             }
           });
 
+          top.appendChild(info);
+          top.appendChild(statusBtn);
+
+          const actions = document.createElement("div");
+          actions.className = "list-actions";
+
+          const waBtn = document.createElement("button");
+          waBtn.type = "button";
+          waBtn.className = "btn-wa btn-sm";
+          waBtn.textContent = "Cobrar Pix / WA";
+          waBtn.addEventListener("click", () => openWhatsAppFesta(item));
+
           const delBtn = document.createElement("button");
           delBtn.type = "button";
           delBtn.className = "btn-close-x btn-sm";
@@ -1168,12 +1224,11 @@ Chave Pix: {pix}</textarea>
             }
           });
 
-          btns.appendChild(statusBtn);
-          btns.appendChild(delBtn);
+          actions.appendChild(waBtn);
+          actions.appendChild(delBtn);
 
-          top.appendChild(info);
-          top.appendChild(btns);
           card.appendChild(top);
+          card.appendChild(actions);
           container.appendChild(card);
         });
       }
@@ -1202,10 +1257,6 @@ Chave Pix: {pix}</textarea>
             <div class="list-meta">Vai graduar para: <strong>${item.faixaDestino || "Próxima graduação"}</strong></div>
           `;
 
-          const btns = document.createElement("div");
-          btns.style.display = "flex";
-          btns.style.gap = "6px";
-
           const statusBtn = document.createElement("button");
           statusBtn.type = "button";
           statusBtn.className = `status-pill-btn ${isPago ? "pill-green" : "pill-red"}`;
@@ -1220,6 +1271,18 @@ Chave Pix: {pix}</textarea>
             }
           });
 
+          top.appendChild(info);
+          top.appendChild(statusBtn);
+
+          const actions = document.createElement("div");
+          actions.className = "list-actions";
+
+          const waBtn = document.createElement("button");
+          waBtn.type = "button";
+          waBtn.className = "btn-wa btn-sm";
+          waBtn.textContent = "Cobrar Pix / WA";
+          waBtn.addEventListener("click", () => openWhatsAppGraduacao(item));
+
           const delBtn = document.createElement("button");
           delBtn.type = "button";
           delBtn.className = "btn-close-x btn-sm";
@@ -1233,17 +1296,15 @@ Chave Pix: {pix}</textarea>
             }
           });
 
-          btns.appendChild(statusBtn);
-          btns.appendChild(delBtn);
+          actions.appendChild(waBtn);
+          actions.appendChild(delBtn);
 
-          top.appendChild(info);
-          top.appendChild(btns);
           card.appendChild(top);
+          card.appendChild(actions);
           container.appendChild(card);
         });
       }
 
-      // SALVAR CHAVE PIX DO DONO DA ACADEMIA
       document.getElementById("btnSalvarPix").addEventListener("click", async () => {
         const chave = (pixChaveEl.value || "").trim();
         const recebedor = (pixRecebedorEl.value || "").trim();
@@ -1252,7 +1313,7 @@ Chave Pix: {pix}</textarea>
         persistLocalLists();
 
         pixMsgEl.className = "status-msg ok-msg";
-        pixMsgEl.textContent = chave ? "Chave Pix salva para as cobranças!" : "Chave Pix limpa.";
+        pixMsgEl.textContent = chave ? "Chave Pix salva para mensalidades, festas e graduação!" : "Chave Pix limpa.";
         setTimeout(() => { pixMsgEl.textContent = ""; }, 2500);
 
         if (db && dbPath("pix")) {
@@ -1434,7 +1495,8 @@ Chave Pix: {pix}</textarea>
         msgEl.textContent = "";
 
         const evento = (document.getElementById("festaNomeEvento").value || "").trim();
-        const participante = (document.getElementById("festaParticipante").value || "").trim();
+        const participante = (festaNomeEl.value || "").trim();
+        const whatsapp = (festaWaEl.value || "").trim() || findAlunoPhoneByName(participante);
         const status = document.getElementById("festaStatus").value;
 
         if (!participante) {
@@ -1442,12 +1504,13 @@ Chave Pix: {pix}</textarea>
           return;
         }
 
-        const novoItem = { id: "festa_" + Date.now(), evento, participante, status, criadoEm: Date.now() };
+        const novoItem = { id: "festa_" + Date.now(), evento, participante, whatsapp, status, criadoEm: Date.now() };
         festasCache = [...festasCache, novoItem];
         persistLocalLists();
         renderFestas();
 
-        document.getElementById("festaParticipante").value = "";
+        festaNomeEl.value = "";
+        festaWaEl.value = "";
         msgEl.className = "status-msg ok-msg";
         msgEl.textContent = "Participante adicionado e salvo!";
         setTimeout(() => { msgEl.textContent = ""; }, 2000);
@@ -1458,7 +1521,7 @@ Chave Pix: {pix}</textarea>
           novoItem.id = refPush.key;
           festasCache = festasCache.map((f) => (f.id === oldId ? novoItem : f));
           persistLocalLists();
-          await refPush.set({ evento, participante, status, criadoEm: novoItem.criadoEm }).catch(() => {});
+          await refPush.set({ evento, participante, whatsapp, status, criadoEm: novoItem.criadoEm }).catch(() => {});
         }
       });
 
