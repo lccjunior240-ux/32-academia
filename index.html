@@ -4,10 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#0b1526" />
-  <title>32 Academia — Gestão</title>
+  <title>32 Academia — Gestão Profissional</title>
   <style>
     :root {
-      --bg: #eef2f6;
+      --bg: #e9eef5;
       --surface: #ffffff;
       --surface-2: #f8fafc;
       --ink: #0f172a;
@@ -15,20 +15,24 @@
       --border: #cbd5e1;
       --border-strong: #0f172a;
       --navy: #0b1526;
-      --navy-2: #162844;
+      --navy-2: #172a49;
       --copper: #c87d4b;
+      --copper-soft: rgba(200, 125, 75, 0.16);
+      --green: #16a34a;
       --green-dark: #15803d;
+      --red: #dc2626;
       --red-dark: #b91c1c;
       --whatsapp: #25d366;
       --shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+      --shadow-md: 0 14px 30px rgba(11, 21, 38, 0.12);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background: var(--bg); color: var(--ink); min-height: 100vh; padding-bottom: 44px; }
+    body { background: var(--bg); color: var(--ink); min-height: 100vh; padding-bottom: 48px; -webkit-font-smoothing: antialiased; }
 
     header {
       background: linear-gradient(135deg, var(--navy) 0%, var(--navy-2) 100%);
-      border-bottom: 2px solid rgba(200, 125, 75, 0.45);
+      border-bottom: 2px solid rgba(200, 125, 75, 0.55);
       padding: 13px 16px;
       position: sticky;
       top: 0;
@@ -38,12 +42,13 @@
       justify-content: space-between;
       gap: 10px;
       color: #ffffff;
+      box-shadow: 0 6px 20px rgba(11, 21, 38, 0.24);
     }
 
     .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
     .brand-badge {
-      width: 50px;
-      height: 44px;
+      width: 52px;
+      height: 46px;
       border-radius: 12px;
       background: #070e1a;
       border: 2px solid var(--copper);
@@ -53,10 +58,11 @@
       justify-content: center;
       line-height: 1;
       flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
     }
-    .brand-num { font-size: 17px; font-weight: 900; font-style: italic; color: #ffffff; }
-    .brand-acad { font-size: 8px; font-weight: 800; color: var(--copper); text-transform: uppercase; margin-top: 2px; }
-    .brand-title { font-size: 17px; font-weight: 900; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .brand-num { font-size: 18px; font-weight: 900; font-style: italic; color: #ffffff; letter-spacing: -0.5px; }
+    .brand-acad { font-size: 8px; font-weight: 800; color: var(--copper); text-transform: uppercase; letter-spacing: 0.6px; margin-top: 2px; }
+    .brand-title { font-size: 17px; font-weight: 900; color: #ffffff; letter-spacing: -0.2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .brand-sub { font-size: 11px; color: #cbd5e1; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
     .btn-header-light {
@@ -65,7 +71,7 @@
       border: 1.5px solid #ffffff;
       padding: 8px 12px;
       font-size: 12px;
-      font-weight: 800;
+      font-weight: 900;
       border-radius: 10px;
       flex-shrink: 0;
     }
@@ -75,7 +81,7 @@
     .card {
       background: var(--surface);
       border: 1.5px solid var(--border);
-      border-radius: 18px;
+      border-radius: 20px;
       padding: 18px;
       margin-bottom: 14px;
       box-shadow: var(--shadow);
@@ -91,7 +97,7 @@
       border-bottom: 1.5px solid #e2e8f0;
     }
 
-    h2 { font-size: 18px; font-weight: 900; color: var(--ink); }
+    h2 { font-size: 18px; font-weight: 900; color: var(--ink); letter-spacing: -0.2px; }
     h3 { font-size: 15px; font-weight: 800; margin-bottom: 8px; color: var(--ink); }
     p.desc { font-size: 13px; color: var(--muted); line-height: 1.45; }
 
@@ -99,11 +105,18 @@
     input, select, textarea {
       width: 100%;
       padding: 12px 13px;
-      border-radius: 11px;
+      border-radius: 12px;
       border: 1.5px solid #cbd5e1;
       background: var(--surface-2);
       color: var(--ink);
       font-size: 15px;
+      transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      background: #ffffff;
+      border-color: var(--navy-2);
+      box-shadow: 0 0 0 3px rgba(23, 42, 73, 0.12);
     }
     textarea { min-height: 84px; resize: vertical; }
 
@@ -122,7 +135,9 @@
       gap: 8px;
       background: var(--surface);
       color: var(--ink);
+      transition: transform 0.08s ease, box-shadow 0.14s ease, background 0.14s ease;
     }
+    button:active { transform: scale(0.985); }
 
     .btn-primary {
       background: linear-gradient(180deg, var(--navy-2) 0%, var(--navy) 100%);
@@ -130,6 +145,7 @@
       border-color: var(--navy);
       width: 100%;
       margin-top: 14px;
+      box-shadow: 0 4px 14px rgba(11, 21, 38, 0.2);
     }
 
     .btn-secondary {
@@ -166,11 +182,12 @@
       font-size: 11px;
       font-weight: 900;
       text-transform: uppercase;
+      letter-spacing: 0.4px;
       color: #ffffff;
       border: none;
     }
-    .pill-green { background: var(--green-dark); }
-    .pill-red { background: var(--red-dark); }
+    .pill-green { background: var(--green-dark); box-shadow: 0 2px 6px rgba(21, 128, 61, 0.25); }
+    .pill-red { background: var(--red-dark); box-shadow: 0 2px 6px rgba(185, 28, 28, 0.25); }
 
     .summary-strip {
       display: grid;
@@ -181,22 +198,22 @@
     .summary-tile {
       background: var(--surface);
       border: 1.5px solid var(--border);
-      border-radius: 14px;
-      padding: 12px 10px;
+      border-radius: 16px;
+      padding: 13px 10px;
       text-align: center;
       box-shadow: var(--shadow);
     }
-    .summary-num { font-size: 20px; font-weight: 900; color: var(--navy); }
+    .summary-num { font-size: 21px; font-weight: 900; color: var(--navy); line-height: 1.1; }
     .summary-num.ok { color: var(--green-dark); }
     .summary-num.pend { color: var(--red-dark); }
-    .summary-lbl { font-size: 11px; font-weight: 700; color: var(--muted); margin-top: 3px; }
+    .summary-lbl { font-size: 11px; font-weight: 700; color: var(--muted); margin-top: 4px; }
 
     .menu-grid { display: grid; grid-template-columns: 1fr; gap: 11px; }
     .menu-btn {
       background: var(--surface);
       border: 1.5px solid var(--border);
       border-radius: 16px;
-      padding: 14px 16px;
+      padding: 15px 16px;
       text-align: left;
       display: flex;
       align-items: center;
@@ -204,28 +221,64 @@
       width: 100%;
       box-shadow: var(--shadow);
     }
-    .menu-btn-left { display: flex; align-items: center; gap: 13px; }
+    .menu-btn:hover {
+      border-color: var(--navy-2);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-1px);
+    }
+    .menu-btn-left { display: flex; align-items: center; gap: 14px; }
     .menu-icon {
-      width: 50px;
-      height: 50px;
-      border-radius: 13px;
-      background: #f1f5f9;
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      background: linear-gradient(180deg, #f8fafc 0%, #eef2f6 100%);
       border: 1.5px solid #cbd5e1;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 24px;
+      font-size: 25px;
       flex-shrink: 0;
     }
     .menu-title { font-size: 15px; font-weight: 900; display: block; color: var(--ink); }
     .menu-sub { font-size: 12px; color: var(--muted); font-weight: 600; display: block; margin-top: 2px; }
     .menu-arrow { font-size: 22px; color: var(--copper); font-weight: 900; }
 
+    .bottom-emblem-card {
+      margin-top: 16px;
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-2) 100%);
+      border: 1.5px solid rgba(200, 125, 75, 0.55);
+      border-radius: 20px;
+      padding: 22px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      color: #ffffff;
+      box-shadow: var(--shadow-md);
+    }
+    .emblem-box-big {
+      width: 112px;
+      height: 96px;
+      border-radius: 18px;
+      background: #070e1a;
+      border: 2px solid var(--copper);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35), inset 0 0 0 1px var(--copper-soft);
+    }
+    .emblem-num-big { font-size: 36px; font-weight: 900; font-style: italic; color: #ffffff; letter-spacing: -1px; }
+    .emblem-acad-big { font-size: 12px; font-weight: 800; color: var(--copper); text-transform: uppercase; letter-spacing: 0.9px; margin-top: 4px; }
+    .emblem-caption { font-size: 12px; color: #e2e8f0; font-weight: 700; letter-spacing: 0.5px; }
+
     .finance-box {
       background: var(--surface-2);
       border: 1.5px solid #cbd5e1;
       border-radius: 14px;
-      padding: 13px;
+      padding: 13px 14px;
       margin-bottom: 10px;
       display: flex;
       align-items: center;
@@ -241,7 +294,7 @@
       background: var(--surface-2);
       border: 1.5px solid #cbd5e1;
       border-radius: 14px;
-      padding: 12px;
+      padding: 13px;
       margin-bottom: 10px;
     }
     .list-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
@@ -292,7 +345,7 @@
     <!-- LOGIN DIRETO SEM TRAVAMENTO -->
     <section id="authSection" class="card">
       <h2>Entrar no Aplicativo</h2>
-      <p class="desc">Acesso imediato no celular com salvamento local automático.</p>
+      <p class="desc">Acesso imediato no celular com salvamento local automático e módulos integrados.</p>
 
       <div id="savedAccountBox" class="saved-box hidden">
         <div class="saved-email" id="savedEmailLabel">Conta salva: ---</div>
@@ -355,6 +408,17 @@
           <span class="menu-arrow">›</span>
         </button>
 
+        <button type="button" class="menu-btn" onclick="abrirTela('viewRelatorio')">
+          <span class="menu-btn-left">
+            <span class="menu-icon">📊</span>
+            <span>
+              <span class="menu-title">Relatório e Cobrança</span>
+              <span class="menu-sub">Quem pagou, quem não pagou, Pix e balanço do mês</span>
+            </span>
+          </span>
+          <span class="menu-arrow">›</span>
+        </button>
+
         <button type="button" class="menu-btn" onclick="abrirTela('viewFestas')">
           <span class="menu-btn-left">
             <span class="menu-icon">🎉</span>
@@ -381,625 +445,3 @@
           <span class="menu-btn-left">
             <span class="menu-icon">📈</span>
             <span>
-              <span class="menu-title">Entradas, Despesas e Lucro</span>
-              <span class="menu-sub">Lançamentos por mês, lucro e exportar CSV / WhatsApp</span>
-            </span>
-          </span>
-          <span class="menu-arrow">›</span>
-        </button>
-      </div>
-    </section>
-
-    <!-- ADICIONAR ALUNO -->
-    <section id="viewAddAluno" class="card hidden">
-      <div class="section-header">
-        <h2>Adicionar Aluno</h2>
-        <button type="button" class="btn-close-x" onclick="abrirTela('menuSection')">✕ Sair</button>
-      </div>
-
-      <label for="alunoNome">Nome do Aluno *</label>
-      <input id="alunoNome" type="text" placeholder="Ex.: Junior Costa" />
-
-      <label for="alunoWhatsapp">WhatsApp (com DDD)</label>
-      <input id="alunoWhatsapp" type="tel" placeholder="Ex.: 53999999999" />
-
-      <label for="alunoEndereco">Endereço</label>
-      <input id="alunoEndereco" type="text" placeholder="Rua, número, bairro" />
-
-      <div class="row-2">
-        <div>
-          <label for="alunoCep">CEP</label>
-          <input id="alunoCep" type="text" placeholder="96200-000" />
-        </div>
-        <div>
-          <label for="alunoPeso">Peso (kg)</label>
-          <input id="alunoPeso" type="text" placeholder="Ex.: 98,5 kg" />
-        </div>
-      </div>
-
-      <label for="alunoStatus">Situação</label>
-      <select id="alunoStatus">
-        <option value="nao_pago">Não Pago (Vermelho)</option>
-        <option value="pago">Pago (Verde)</option>
-      </select>
-
-      <button type="button" class="btn-primary" onclick="salvarAluno()">Salvar Aluno</button>
-      <div id="alunoMsg" class="status-msg"></div>
-      <button type="button" class="btn-exit-bottom" onclick="abrirTela('menuSection')">Voltar ao Menu</button>
-    </section>
-
-    <!-- TODOS OS ALUNOS -->
-    <section id="viewTodosAlunos" class="card hidden">
-      <div class="section-header">
-        <h2>Todos os Alunos (<span id="totalAlunosTitulo">0</span>)</h2>
-        <button type="button" class="btn-close-x" onclick="abrirTela('menuSection')">✕ Sair</button>
-      </div>
-
-      <label for="pixChaveInput">Chave Pix para Cobrança (opcional)</label>
-      <input id="pixChaveInput" type="text" placeholder="Ex.: sua chave pix" onchange="salvarPix()" />
-
-      <div id="listaTodosAlunos" style="margin-top:12px;"></div>
-      <button type="button" class="btn-exit-bottom" onclick="abrirTela('menuSection')">Voltar ao Menu</button>
-    </section>
-
-    <!-- FESTAS -->
-    <section id="viewFestas" class="card hidden">
-      <div class="section-header">
-        <h2>Festas e Eventos</h2>
-        <button type="button" class="btn-close-x" onclick="abrirTela('menuSection')">✕ Sair</button>
-      </div>
-
-      <label for="festaEvento">Nome do Evento</label>
-      <input id="festaEvento" type="text" placeholder="Ex.: Confraternização" />
-
-      <div class="row-2">
-        <div>
-          <label for="festaParticipante">Participante</label>
-          <input id="festaParticipante" type="text" placeholder="Nome" />
-        </div>
-        <div>
-          <label for="festaWhatsapp">WhatsApp</label>
-          <input id="festaWhatsapp" type="tel" placeholder="53999999999" />
-        </div>
-      </div>
-
-      <label for="festaStatus">Situação</label>
-      <select id="festaStatus">
-        <option value="nao_pago">Não Pago (Vermelho)</option>
-        <option value="pago">Pago (Verde)</option>
-      </select>
-
-      <button type="button" class="btn-primary" onclick="salvarFesta()">Adicionar Participante</button>
-      <div id="festaMsg" class="status-msg"></div>
-
-      <div id="listaFesta" style="margin-top:12px;"></div>
-      <button type="button" class="btn-exit-bottom" onclick="abrirTela('menuSection')">Voltar ao Menu</button>
-    </section>
-
-    <!-- GRADUAÇÃO -->
-    <section id="viewGraduacao" class="card hidden">
-      <div class="section-header">
-        <h2>Graduação</h2>
-        <button type="button" class="btn-close-x" onclick="abrirTela('menuSection')">✕ Sair</button>
-      </div>
-
-      <label for="gradAluno">Nome do Aluno</label>
-      <input id="gradAluno" type="text" placeholder="Ex.: Junior Costa" />
-
-      <div class="row-2">
-        <div>
-          <label for="gradFaixa">Faixa / Grau</label>
-          <input id="gradFaixa" type="text" placeholder="Ex.: Azul / Grau" />
-        </div>
-        <div>
-          <label for="gradStatus">Situação</label>
-          <select id="gradStatus">
-            <option value="nao_pago">Não Pago (Vermelho)</option>
-            <option value="pago">Pago (Verde)</option>
-          </select>
-        </div>
-      </div>
-
-      <button type="button" class="btn-primary" onclick="salvarGraduacao()">Salvar na Graduação</button>
-      <div id="gradMsg" class="status-msg"></div>
-
-      <div id="listaGraduacao" style="margin-top:12px;"></div>
-      <button type="button" class="btn-exit-bottom" onclick="abrirTela('menuSection')">Voltar ao Menu</button>
-    </section>
-
-    <!-- FINANCEIRO MENSAL -->
-    <section id="viewFinanceiro" class="card hidden">
-      <div class="section-header">
-        <h2>Entradas, Despesas e Lucro</h2>
-        <button type="button" class="btn-close-x" onclick="abrirTela('menuSection')">✕ Sair</button>
-      </div>
-
-      <label for="mesFiltro">Consultar Mês</label>
-      <input id="mesFiltro" type="month" onchange="renderFinanceiro()" />
-
-      <div class="finance-box" style="margin-top:12px;">
-        <div><div class="finance-label">Entradas no Mês</div></div>
-        <div class="finance-val in" id="finEntradas">R$ 0,00</div>
-      </div>
-
-      <div class="finance-box">
-        <div><div class="finance-label">Despesas no Mês</div></div>
-        <div class="finance-val out" id="finDespesas">R$ 0,00</div>
-      </div>
-
-      <div class="finance-box">
-        <div><div class="finance-label">Lucro Líquido do Mês</div></div>
-        <div class="finance-val" id="finLucro">R$ 0,00</div>
-      </div>
-
-      <h3>Novo Lançamento</h3>
-      <div class="row-2">
-        <div>
-          <label for="lancTipo">Tipo</label>
-          <select id="lancTipo">
-            <option value="entrada">Entrada (+)</option>
-            <option value="despesa">Despesa (-)</option>
-          </select>
-        </div>
-        <div>
-          <label for="lancData">Data</label>
-          <input id="lancData" type="date" />
-        </div>
-      </div>
-
-      <div class="row-2">
-        <div>
-          <label for="lancDesc">Descrição</label>
-          <input id="lancDesc" type="text" placeholder="Ex.: Mensalidade / Aluguel" />
-        </div>
-        <div>
-          <label for="lancValor">Valor (R$)</label>
-          <input id="lancValor" type="number" step="0.01" min="0" placeholder="0.00" />
-        </div>
-      </div>
-
-      <button type="button" class="btn-primary" onclick="salvarLancamento()">Registrar no Mês</button>
-      <div id="lancMsg" class="status-msg"></div>
-
-      <div class="toolbar">
-        <button type="button" class="btn-close-x btn-sm" onclick="baixarCsv()">Baixar CSV do Mês</button>
-        <button type="button" class="btn-wa btn-sm" onclick="enviarResumoWhatsApp()">Resumo no WhatsApp</button>
-      </div>
-
-      <div id="listaLancamentos"></div>
-      <button type="button" class="btn-exit-bottom" onclick="abrirTela('menuSection')">Voltar ao Menu</button>
-    </section>
-  </main>
-
-  <script>
-    const STORAGE_KEY = "academia32_direto_v1";
-
-    function hojeISO() {
-      const d = new Date();
-      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-    }
-
-    function mesAtualISO() {
-      return hojeISO().slice(0, 7);
-    }
-
-    function formatBRL(v) {
-      return (Number(v) || 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-    }
-
-    let estado = {
-      logado: false,
-      email: "",
-      nomeAcademia: "32 Academia",
-      pix: "",
-      alunos: [],
-      festas: [],
-      graduacao: [],
-      lancamentos: []
-    };
-
-    function carregarEstado() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (raw) {
-          const parsed = JSON.parse(raw);
-          estado = {
-            ...estado,
-            ...parsed,
-            alunos: Array.isArray(parsed.alunos) ? parsed.alunos : [],
-            festas: Array.isArray(parsed.festas) ? parsed.festas : [],
-            graduacao: Array.isArray(parsed.graduacao) ? parsed.graduacao : [],
-            lancamentos: Array.isArray(parsed.lancamentos) ? parsed.lancamentos : []
-          };
-        }
-      } catch (_) {}
-    }
-
-    function salvarEstado() {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(estado));
-      } catch (_) {}
-    }
-
-    function atualizarCabecalho() {
-      const titulo = estado.nomeAcademia || "32 Academia";
-      document.getElementById("headerTitle").textContent = titulo;
-      document.getElementById("headerUser").textContent = estado.logado ? (estado.email || "Conta ativa") : "Sistema de Gestão";
-      document.getElementById("btnLogout").classList.toggle("hidden", !estado.logado);
-    }
-
-    function atualizarTelaLogin() {
-      const box = document.getElementById("savedAccountBox");
-      if (estado.email) {
-        document.getElementById("savedEmailLabel").textContent = "Conta salva: " + estado.email;
-        box.classList.remove("hidden");
-        if (!document.getElementById("emailInput").value) {
-          document.getElementById("emailInput").value = estado.email;
-        }
-      } else {
-        box.classList.add("hidden");
-      }
-    }
-
-    function entrarNoApp(usarSalva) {
-      const inputEmail = (document.getElementById("emailInput").value || "").trim();
-      const inputNome = (document.getElementById("nomeAcademia").value || "").trim();
-
-      const emailFinal = usarSalva
-        ? (estado.email || inputEmail || "gestor@32academia.local")
-        : (inputEmail || estado.email || "gestor@32academia.local");
-
-      estado.email = emailFinal;
-      if (inputNome) {
-        estado.nomeAcademia = inputNome;
-      } else if (!estado.nomeAcademia) {
-        estado.nomeAcademia = "32 Academia";
-      }
-      estado.logado = true;
-      salvarEstado();
-
-      document.getElementById("authSection").classList.add("hidden");
-      document.getElementById("authDiag").textContent = "Entrou com sucesso como " + emailFinal;
-      atualizarCabecalho();
-      renderTudo();
-      abrirTela("menuSection");
-    }
-
-    function sairDoApp() {
-      estado.logado = false;
-      salvarEstado();
-      ["viewAddAluno", "viewTodosAlunos", "viewFestas", "viewGraduacao", "viewFinanceiro"].forEach((id) => {
-        document.getElementById(id).classList.add("hidden");
-      });
-      document.getElementById("menuSection").classList.add("hidden");
-      document.getElementById("authSection").classList.remove("hidden");
-      atualizarCabecalho();
-      atualizarTelaLogin();
-    }
-
-    function abrirTela(id) {
-      ["menuSection", "viewAddAluno", "viewTodosAlunos", "viewFestas", "viewGraduacao", "viewFinanceiro"].forEach((sec) => {
-        document.getElementById(sec).classList.toggle("hidden", sec !== id);
-      });
-      renderTudo();
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-
-    function limparFone(fone) {
-      let d = (fone || "").replace(/\D/g, "");
-      if (d.length === 10 || d.length === 11) d = "55" + d;
-      return d;
-    }
-
-    function cobrarWhatsApp(nome, fone, motivo) {
-      const pixTexto = estado.pix ? `\nChave Pix: ${estado.pix}` : "";
-      const msg = `Olá ${nome}! Passando para lembrar sobre ${motivo}.${pixTexto}`;
-      const num = limparFone(fone);
-      const url = num ? `https://wa.me/${num}?text=${encodeURIComponent(msg)}` : `https://wa.me/?text=${encodeURIComponent(msg)}`;
-      window.open(url, "_blank", "noopener");
-    }
-
-    function salvarPix() {
-      estado.pix = (document.getElementById("pixChaveInput").value || "").trim();
-      salvarEstado();
-    }
-
-    function salvarAluno() {
-      const nome = (document.getElementById("alunoNome").value || "").trim();
-      const msgEl = document.getElementById("alunoMsg");
-      if (!nome) {
-        msgEl.style.color = "#b91c1c";
-        msgEl.textContent = "Digite o nome do aluno.";
-        return;
-      }
-
-      estado.alunos.push({
-        id: "al_" + Date.now(),
-        nome,
-        whatsapp: (document.getElementById("alunoWhatsapp").value || "").trim(),
-        endereco: (document.getElementById("alunoEndereco").value || "").trim(),
-        cep: (document.getElementById("alunoCep").value || "").trim(),
-        peso: (document.getElementById("alunoPeso").value || "").trim(),
-        status: document.getElementById("alunoStatus").value
-      });
-      salvarEstado();
-
-      ["alunoNome", "alunoWhatsapp", "alunoEndereco", "alunoCep", "alunoPeso"].forEach((id) => {
-        document.getElementById(id).value = "";
-      });
-      msgEl.style.color = "#15803d";
-      msgEl.textContent = "Aluno salvo!";
-      renderTudo();
-    }
-
-    function alternarStatus(lista, id) {
-      const item = estado[lista].find((x) => x.id === id);
-      if (!item) return;
-      item.status = item.status === "pago" ? "nao_pago" : "pago";
-      salvarEstado();
-      renderTudo();
-    }
-
-    function excluirItem(lista, id) {
-      estado[lista] = estado[lista].filter((x) => x.id !== id);
-      salvarEstado();
-      renderTudo();
-    }
-
-    function salvarFesta() {
-      const participante = (document.getElementById("festaParticipante").value || "").trim();
-      const msgEl = document.getElementById("festaMsg");
-      if (!participante) {
-        msgEl.style.color = "#b91c1c";
-        msgEl.textContent = "Digite o nome do participante.";
-        return;
-      }
-
-      estado.festas.push({
-        id: "fe_" + Date.now(),
-        evento: (document.getElementById("festaEvento").value || "").trim() || "Evento",
-        participante,
-        whatsapp: (document.getElementById("festaWhatsapp").value || "").trim(),
-        status: document.getElementById("festaStatus").value
-      });
-      salvarEstado();
-
-      document.getElementById("festaParticipante").value = "";
-      document.getElementById("festaWhatsapp").value = "";
-      msgEl.style.color = "#15803d";
-      msgEl.textContent = "Participante salvo!";
-      renderTudo();
-    }
-
-    function salvarGraduacao() {
-      const aluno = (document.getElementById("gradAluno").value || "").trim();
-      const msgEl = document.getElementById("gradMsg");
-      if (!aluno) {
-        msgEl.style.color = "#b91c1c";
-        msgEl.textContent = "Digite o nome do aluno.";
-        return;
-      }
-
-      estado.graduacao.push({
-        id: "gr_" + Date.now(),
-        aluno,
-        faixa: (document.getElementById("gradFaixa").value || "").trim() || "Próxima etapa",
-        status: document.getElementById("gradStatus").value
-      });
-      salvarEstado();
-
-      document.getElementById("gradAluno").value = "";
-      document.getElementById("gradFaixa").value = "";
-      msgEl.style.color = "#15803d";
-      msgEl.textContent = "Salvo na graduação!";
-      renderTudo();
-    }
-
-    function salvarLancamento() {
-      const tipo = document.getElementById("lancTipo").value;
-      const data = document.getElementById("lancData").value || hojeISO();
-      const desc = (document.getElementById("lancDesc").value || "").trim() || (tipo === "entrada" ? "Entrada" : "Despesa");
-      const valor = parseFloat(document.getElementById("lancValor").value);
-      const msgEl = document.getElementById("lancMsg");
-
-      if (!Number.isFinite(valor) || valor <= 0) {
-        msgEl.style.color = "#b91c1c";
-        msgEl.textContent = "Informe um valor maior que zero.";
-        return;
-      }
-
-      estado.lancamentos.push({
-        id: "la_" + Date.now(),
-        tipo,
-        data,
-        desc,
-        valor
-      });
-      document.getElementById("mesFiltro").value = data.slice(0, 7);
-      salvarEstado();
-
-      document.getElementById("lancDesc").value = "";
-      document.getElementById("lancValor").value = "";
-      msgEl.style.color = "#15803d";
-      msgEl.textContent = "Lançamento salvo!";
-      renderFinanceiro();
-    }
-
-    function renderResumo() {
-      const total = estado.alunos.length;
-      const pagos = estado.alunos.filter((a) => a.status === "pago").length;
-      document.getElementById("sumTotalAlunos").textContent = String(total);
-      document.getElementById("sumPagos").textContent = String(pagos);
-      document.getElementById("sumNaoPagos").textContent = String(total - pagos);
-      document.getElementById("countMenuAlunos").textContent = String(total);
-      document.getElementById("totalAlunosTitulo").textContent = String(total);
-      document.getElementById("pixChaveInput").value = estado.pix || "";
-    }
-
-    function renderAlunos() {
-      const el = document.getElementById("listaTodosAlunos");
-      if (!estado.alunos.length) {
-        el.innerHTML = `<p class="desc">Nenhum aluno cadastrado ainda.</p>`;
-        return;
-      }
-
-      el.innerHTML = estado.alunos.map((a) => {
-        const pago = a.status === "pago";
-        return `
-          <div class="list-card">
-            <div class="list-top">
-              <div class="list-title">${a.nome}</div>
-              <button type="button" class="status-pill-btn ${pago ? "pill-green" : "pill-red"}" onclick="alternarStatus('alunos','${a.id}')">
-                ${pago ? "Pago" : "Não Pago"}
-              </button>
-            </div>
-            <div class="list-meta">
-              WA: ${a.whatsapp || "-"} • Peso: ${a.peso || "-"} • CEP: ${a.cep || "-"}<br/>
-              Endereço: ${a.endereco || "-"}
-            </div>
-            <div class="list-actions">
-              <button type="button" class="btn-wa btn-sm" onclick="cobrarWhatsApp('${a.nome.replaceAll("'", "")}','${a.whatsapp}','a mensalidade da academia')">WhatsApp</button>
-              <button type="button" class="btn-close-x btn-sm" onclick="excluirItem('alunos','${a.id}')">Excluir</button>
-            </div>
-          </div>
-        `;
-      }).join("");
-    }
-
-    function renderFestas() {
-      const el = document.getElementById("listaFesta");
-      if (!estado.festas.length) {
-        el.innerHTML = `<p class="desc">Nenhum participante adicionado.</p>`;
-        return;
-      }
-
-      el.innerHTML = estado.festas.map((f) => {
-        const pago = f.status === "pago";
-        return `
-          <div class="list-card">
-            <div class="list-top">
-              <div class="list-title">${f.participante}</div>
-              <button type="button" class="status-pill-btn ${pago ? "pill-green" : "pill-red"}" onclick="alternarStatus('festas','${f.id}')">
-                ${pago ? "Pago" : "Não Pago"}
-              </button>
-            </div>
-            <div class="list-meta">Evento: ${f.evento} • WA: ${f.whatsapp || "-"}</div>
-            <div class="list-actions">
-              <button type="button" class="btn-wa btn-sm" onclick="cobrarWhatsApp('${f.participante.replaceAll("'", "")}','${f.whatsapp}','o evento ${f.evento.replaceAll("'", "")}')">Cobrar Pix / WA</button>
-              <button type="button" class="btn-close-x btn-sm" onclick="excluirItem('festas','${f.id}')">Excluir</button>
-            </div>
-          </div>
-        `;
-      }).join("");
-    }
-
-    function renderGraduacao() {
-      const el = document.getElementById("listaGraduacao");
-      if (!estado.graduacao.length) {
-        el.innerHTML = `<p class="desc">Nenhum aluno na graduação.</p>`;
-        return;
-      }
-
-      el.innerHTML = estado.graduacao.map((g) => {
-        const pago = g.status === "pago";
-        return `
-          <div class="list-card">
-            <div class="list-top">
-              <div class="list-title">${g.aluno}</div>
-              <button type="button" class="status-pill-btn ${pago ? "pill-green" : "pill-red"}" onclick="alternarStatus('graduacao','${g.id}')">
-                ${pago ? "Pago" : "Não Pago"}
-              </button>
-            </div>
-            <div class="list-meta">Vai para: ${g.faixa}</div>
-            <div class="list-actions">
-              <button type="button" class="btn-wa btn-sm" onclick="cobrarWhatsApp('${g.aluno.replaceAll("'", "")}','','a graduação (${g.faixa.replaceAll("'", "")})')">Cobrar Pix / WA</button>
-              <button type="button" class="btn-close-x btn-sm" onclick="excluirItem('graduacao','${g.id}')">Excluir</button>
-            </div>
-          </div>
-        `;
-      }).join("");
-    }
-
-    function renderFinanceiro() {
-      const mes = document.getElementById("mesFiltro").value || mesAtualISO();
-      const itensMes = estado.lancamentos.filter((l) => (l.data || "").slice(0, 7) === mes);
-
-      const entradas = itensMes.filter((l) => l.tipo === "entrada").reduce((s, x) => s + (Number(x.valor) || 0), 0);
-      const despesas = itensMes.filter((l) => l.tipo === "despesa").reduce((s, x) => s + (Number(x.valor) || 0), 0);
-      const lucro = entradas - despesas;
-
-      document.getElementById("finEntradas").textContent = formatBRL(entradas);
-      document.getElementById("finDespesas").textContent = formatBRL(despesas);
-      const lucroEl = document.getElementById("finLucro");
-      lucroEl.textContent = formatBRL(lucro);
-      lucroEl.style.color = lucro < 0 ? "#b91c1c" : "#15803d";
-
-      const listaEl = document.getElementById("listaLancamentos");
-      if (!itensMes.length) {
-        listaEl.innerHTML = `<p class="desc">Sem lançamentos neste mês.</p>`;
-        return;
-      }
-
-      listaEl.innerHTML = itensMes.map((l) => `
-        <div class="list-card">
-          <div class="list-top">
-            <div>
-              <div class="list-title">${l.desc}</div>
-              <div class="list-meta">${l.data} • ${l.tipo === "entrada" ? "Entrada" : "Despesa"} • <strong>${formatBRL(l.valor)}</strong></div>
-            </div>
-            <button type="button" class="btn-close-x btn-sm" onclick="excluirItem('lancamentos','${l.id}')">Excluir</button>
-          </div>
-        </div>
-      `).join("");
-    }
-
-    function baixarCsv() {
-      const mes = document.getElementById("mesFiltro").value || mesAtualISO();
-      const itens = estado.lancamentos.filter((l) => (l.data || "").slice(0, 7) === mes);
-      const linhas = ["Data;Tipo;Descricao;Valor"];
-      itens.forEach((l) => {
-        linhas.push(`${l.data};${l.tipo};"${(l.desc || "").replaceAll('"', '""')}";${String(l.valor || 0).replace(".", ",")}`);
-      });
-      const blob = new Blob(["\uFEFF" + linhas.join("\n")], { type: "text/csv;charset=utf-8;" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `32-academia-${mes}.csv`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      setTimeout(() => URL.revokeObjectURL(url), 1000);
-    }
-
-    function enviarResumoWhatsApp() {
-      const mes = document.getElementById("mesFiltro").value || mesAtualISO();
-      const itens = estado.lancamentos.filter((l) => (l.data || "").slice(0, 7) === mes);
-      const entradas = itens.filter((l) => l.tipo === "entrada").reduce((s, x) => s + (Number(x.valor) || 0), 0);
-      const despesas = itens.filter((l) => l.tipo === "despesa").reduce((s, x) => s + (Number(x.valor) || 0), 0);
-      const lucro = entradas - despesas;
-      const texto = `${estado.nomeAcademia} — ${mes}\nEntradas: ${formatBRL(entradas)}\nDespesas: ${formatBRL(despesas)}\nLucro: ${formatBRL(lucro)}`;
-      window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`, "_blank", "noopener");
-    }
-
-    function renderTudo() {
-      renderResumo();
-      renderAlunos();
-      renderFestas();
-      renderGraduacao();
-      renderFinanceiro();
-    }
-
-    carregarEstado();
-    document.getElementById("lancData").value = hojeISO();
-    document.getElementById("mesFiltro").value = mesAtualISO();
-    atualizarCabecalho();
-    atualizarTelaLogin();
-    renderTudo();
-
-    if (estado.logado) {
-      document.getElementById("authSection").classList.add("hidden");
-      abrirTela("menuSection");
-    }
-  </script>
-</body>
-</html>
