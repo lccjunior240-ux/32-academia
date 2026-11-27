@@ -445,3 +445,805 @@
           <span class="menu-btn-left">
             <span class="menu-icon">📈</span>
             <span>
+              <span class="menu-title">Entradas, Despesas e Lucro</span>
+              <span class="menu-sub">Lançamentos por mês, lucro e exportar CSV / WhatsApp</span>
+            </span>
+          </span>
+          <span class="menu-arrow">›</span>
+        </button>
+      </div>
+
+      <div class="bottom-emblem-card" aria-hidden="true">
+        <div class="emblem-box-big">
+          <span class="emblem-num-big">32</span>
+          <span class="emblem-acad-big">academia</span>
+        </div>
+        <div class="emblem-caption" id="emblemFooterLabel">32 ACADEMIA • GESTÃO PROFISSIONAL</div>
+      </div>
+    </section>
+
+    <!-- ADICIONAR ALUNO -->
+    <section id="viewAddAluno" class="card hidden">
+      <div class="section-header">
+        <h2>Adicionar Aluno</h2>
+        <button type="button" class="btn-close-x" onclick="abrirTela('menuSection')">✕ Sair</button>
+      </div>
+
+      <label for="alunoNome">Nome do Aluno *</label>
+      <input id="alunoNome" type="text" placeholder="Ex.: Junior Costa" />
+
+      <label for="alunoWhatsapp">WhatsApp (com DDD)</label>
+      <input id="alunoWhatsapp" type="tel" placeholder="Ex.: 53999999999" />
+
+      <label for="alunoEndereco">Endereço</label>
+      <input id="alunoEndereco" type="text" placeholder="Rua, número, bairro" />
+
+      <div class="row-2">
+        <div>
+          <label for="alunoCep">CEP</label>
+          <input id="alunoCep" type="text" placeholder="96200-000" />
+        </div>
+        <div>
+          <label for="alunoPeso">Peso (kg)</label>
+          <input id="alunoPeso" type="text" placeholder="Ex.: 98,5 kg" />
+        </div>
+      </div>
+
+      <label for="alunoStatus">Situação</label>
+      <select id="alunoStatus">
+        <option value="nao_pago">Não Pago (Vermelho)</option>
+        <option value="pago">Pago (Verde)</option>
+      </select>
+
+      <button type="button" class="btn-primary" onclick="salvarAluno()">Salvar Aluno</button>
+      <div id="alunoMsg" class="status-msg"></div>
+      <button type="button" class="btn-exit-bottom" onclick="abrirTela('menuSection')">Voltar ao Menu</button>
+    </section>
+
+    <!-- TODOS OS ALUNOS -->
+    <section id="viewTodosAlunos" class="card hidden">
+      <div class="section-header">
+        <h2>Todos os Alunos (<span id="totalAlunosTitulo">0</span>)</h2>
+        <button type="button" class="btn-close-x" onclick="abrirTela('menuSection')">✕ Sair</button>
+      </div>
+
+      <div id="listaTodosAlunos"></div>
+      <button type="button" class="btn-exit-bottom" onclick="abrirTela('menuSection')">Voltar ao Menu</button>
+    </section>
+
+    <!-- RELATÓRIO E COBRANÇA INTEGRADO -->
+    <section id="viewRelatorio" class="card hidden">
+      <div class="section-header">
+        <h2>Relatório e Cobrança</h2>
+        <button type="button" class="btn-close-x" onclick="abrirTela('menuSection')">✕ Sair</button>
+      </div>
+
+      <div class="summary-strip">
+        <div class="summary-tile">
+          <div class="summary-num" id="relQtdTotal">0</div>
+          <div class="summary-lbl">Total Alunos</div>
+        </div>
+        <div class="summary-tile">
+          <div class="summary-num ok" id="relQtdPagos">0</div>
+          <div class="summary-lbl">Pagos</div>
+        </div>
+        <div class="summary-tile">
+          <div class="summary-num pend" id="relQtdPendentes">0</div>
+          <div class="summary-lbl">Não Pagos</div>
+        </div>
+      </div>
+
+      <div class="finance-box">
+        <div>
+          <div class="finance-label">Balanço Sincronizado do Mês (<span id="relMesLabel">---</span>)</div>
+          <div class="desc">Entradas menos despesas do mês selecionado</div>
+        </div>
+        <div class="finance-val" id="relLucroMes">R$ 0,00</div>
+      </div>
+
+      <label for="pixChaveInput">Configurar Chave Pix do Gestor</label>
+      <input id="pixChaveInput" type="text" placeholder="Digite ou cole a chave Pix do gestor" oninput="salvarPix()" onchange="salvarPix()" />
+      <div class="toolbar">
+        <button type="button" class="btn-primary btn-sm" style="flex:1; margin-top:0;" onclick="salvarPix(true)">Salvar Pix</button>
+        <button type="button" class="btn-close-x btn-sm" onclick="copiarChavePix()">Copiar Pix</button>
+      </div>
+      <div id="pixStatusMsg" class="status-msg"></div>
+
+      <div class="toolbar">
+        <button type="button" class="btn-close-x btn-sm" onclick="setFiltroRel('todos')">Todos</button>
+        <button type="button" class="btn-sm pill-red" onclick="setFiltroRel('nao_pago')">Não Pagos</button>
+        <button type="button" class="btn-sm pill-green" onclick="setFiltroRel('pago')">Pagos</button>
+        <button type="button" class="btn-close-x btn-sm" onclick="abrirTela('viewFinanceiro')">Ver Financeiro</button>
+      </div>
+
+      <div id="listaRelatorio"></div>
+      <button type="button" class="btn-exit-bottom" onclick="abrirTela('menuSection')">Voltar ao Menu</button>
+    </section>
+
+    <!-- FESTAS -->
+    <section id="viewFestas" class="card hidden">
+      <div class="section-header">
+        <h2>Festas e Eventos</h2>
+        <button type="button" class="btn-close-x" onclick="abrirTela('menuSection')">✕ Sair</button>
+      </div>
+
+      <label for="festaEvento">Nome do Evento</label>
+      <input id="festaEvento" type="text" placeholder="Ex.: Confraternização" />
+
+      <div class="row-2">
+        <div>
+          <label for="festaParticipante">Participante</label>
+          <input id="festaParticipante" type="text" placeholder="Nome" oninput="autoPreencherTelefoneFesta()" />
+        </div>
+        <div>
+          <label for="festaWhatsapp">WhatsApp</label>
+          <input id="festaWhatsapp" type="tel" placeholder="53999999999" />
+        </div>
+      </div>
+
+      <label for="festaStatus">Situação</label>
+      <select id="festaStatus">
+        <option value="nao_pago">Não Pago (Vermelho)</option>
+        <option value="pago">Pago (Verde)</option>
+      </select>
+
+      <button type="button" class="btn-primary" onclick="salvarFesta()">Adicionar Participante</button>
+      <div id="festaMsg" class="status-msg"></div>
+
+      <div id="listaFesta" style="margin-top:12px;"></div>
+      <button type="button" class="btn-exit-bottom" onclick="abrirTela('menuSection')">Voltar ao Menu</button>
+    </section>
+
+    <!-- GRADUAÇÃO -->
+    <section id="viewGraduacao" class="card hidden">
+      <div class="section-header">
+        <h2>Graduação</h2>
+        <button type="button" class="btn-close-x" onclick="abrirTela('menuSection')">✕ Sair</button>
+      </div>
+
+      <label for="gradAluno">Nome do Aluno</label>
+      <input id="gradAluno" type="text" placeholder="Ex.: Junior Costa" />
+
+      <div class="row-2">
+        <div>
+          <label for="gradFaixa">Faixa / Grau</label>
+          <input id="gradFaixa" type="text" placeholder="Ex.: Azul / Grau" />
+        </div>
+        <div>
+          <label for="gradStatus">Situação</label>
+          <select id="gradStatus">
+            <option value="nao_pago">Não Pago (Vermelho)</option>
+            <option value="pago">Pago (Verde)</option>
+          </select>
+        </div>
+      </div>
+
+      <button type="button" class="btn-primary" onclick="salvarGraduacao()">Salvar na Graduação</button>
+      <div id="gradMsg" class="status-msg"></div>
+
+      <div id="listaGraduacao" style="margin-top:12px;"></div>
+      <button type="button" class="btn-exit-bottom" onclick="abrirTela('menuSection')">Voltar ao Menu</button>
+    </section>
+
+    <!-- FINANCEIRO MENSAL INTEGRADO -->
+    <section id="viewFinanceiro" class="card hidden">
+      <div class="section-header">
+        <h2>Entradas, Despesas e Lucro</h2>
+        <button type="button" class="btn-close-x" onclick="abrirTela('menuSection')">✕ Sair</button>
+      </div>
+
+      <label for="mesFiltro">Consultar Mês</label>
+      <input id="mesFiltro" type="month" onchange="renderTudo()" />
+
+      <div class="finance-box" style="margin-top:12px;">
+        <div><div class="finance-label">Tudo que Entrou no Mês</div></div>
+        <div class="finance-val in" id="finEntradas">R$ 0,00</div>
+      </div>
+
+      <div class="finance-box">
+        <div><div class="finance-label">Despesas no Mês</div></div>
+        <div class="finance-val out" id="finDespesas">R$ 0,00</div>
+      </div>
+
+      <div class="finance-box">
+        <div><div class="finance-label">Lucro Líquido do Mês</div></div>
+        <div class="finance-val" id="finLucro">R$ 0,00</div>
+      </div>
+
+      <h3>Novo Lançamento</h3>
+      <div class="row-2">
+        <div>
+          <label for="lancTipo">Tipo</label>
+          <select id="lancTipo">
+            <option value="entrada">Entrada (+)</option>
+            <option value="despesa">Despesa (-)</option>
+          </select>
+        </div>
+        <div>
+          <label for="lancData">Data</label>
+          <input id="lancData" type="date" />
+        </div>
+      </div>
+
+      <div class="row-2">
+        <div>
+          <label for="lancDesc">Descrição</label>
+          <input id="lancDesc" type="text" placeholder="Ex.: Mensalidade / Aluguel" />
+        </div>
+        <div>
+          <label for="lancValor">Valor (R$)</label>
+          <input id="lancValor" type="number" step="0.01" min="0" placeholder="0.00" />
+        </div>
+      </div>
+
+      <button type="button" class="btn-primary" onclick="salvarLancamento()">Registrar no Mês</button>
+      <div id="lancMsg" class="status-msg"></div>
+
+      <div class="toolbar">
+        <button type="button" class="btn-close-x btn-sm" onclick="baixarCsv()">Baixar CSV do Mês</button>
+        <button type="button" class="btn-wa btn-sm" onclick="enviarResumoWhatsApp()">Resumo no WhatsApp</button>
+        <button type="button" class="btn-close-x btn-sm" onclick="abrirTela('viewRelatorio')">Ir para Relatório</button>
+      </div>
+
+      <div id="listaLancamentos"></div>
+      <button type="button" class="btn-exit-bottom" onclick="abrirTela('menuSection')">Voltar ao Menu</button>
+    </section>
+  </main>
+
+  <script>
+    const STORAGE_KEY = "academia32_gestor_v1";
+    let filtroRelatorio = "todos";
+
+    function hojeISO() {
+      const d = new Date();
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+    }
+
+    function mesAtualISO() {
+      return hojeISO().slice(0, 7);
+    }
+
+    function formatBRL(v) {
+      return (Number(v) || 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+    }
+
+    let estado = {
+      logado: false,
+      email: "",
+      nomeAcademia: "32 Academia",
+      pix: "",
+      alunos: [],
+      festas: [],
+      graduacao: [],
+      lancamentos: []
+    };
+
+    function carregarEstado() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          estado = {
+            ...estado,
+            ...parsed,
+            pix: (parsed && typeof parsed.pix === "string") ? parsed.pix : "",
+            alunos: Array.isArray(parsed.alunos) ? parsed.alunos : [],
+            festas: Array.isArray(parsed.festas) ? parsed.festas : [],
+            graduacao: Array.isArray(parsed.graduacao) ? parsed.graduacao : [],
+            lancamentos: Array.isArray(parsed.lancamentos) ? parsed.lancamentos : []
+          };
+        }
+      } catch (_) {}
+    }
+
+    function salvarEstado() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(estado));
+      } catch (_) {}
+    }
+
+    function atualizarCabecalho() {
+      const titulo = estado.nomeAcademia || "32 Academia";
+      document.getElementById("headerTitle").textContent = titulo;
+      document.getElementById("headerUser").textContent = estado.logado ? (estado.email || "Conta ativa") : "Sistema de Gestão";
+      document.getElementById("emblemFooterLabel").textContent = `${titulo.toUpperCase()} • GESTÃO PROFISSIONAL`;
+      document.getElementById("btnLogout").classList.toggle("hidden", !estado.logado);
+    }
+
+    function atualizarTelaLogin() {
+      const box = document.getElementById("savedAccountBox");
+      if (estado.email) {
+        document.getElementById("savedEmailLabel").textContent = "Conta salva: " + estado.email;
+        box.classList.remove("hidden");
+        if (!document.getElementById("emailInput").value) {
+          document.getElementById("emailInput").value = estado.email;
+        }
+      } else {
+        box.classList.add("hidden");
+      }
+    }
+
+    function entrarNoApp(usarSalva) {
+      const inputEmail = (document.getElementById("emailInput").value || "").trim();
+      const inputNome = (document.getElementById("nomeAcademia").value || "").trim();
+
+      const emailFinal = usarSalva
+        ? (estado.email || inputEmail || "gestor@32academia.local")
+        : (inputEmail || estado.email || "gestor@32academia.local");
+
+      estado.email = emailFinal;
+      if (inputNome) {
+        estado.nomeAcademia = inputNome;
+      } else if (!estado.nomeAcademia) {
+        estado.nomeAcademia = "32 Academia";
+      }
+      estado.logado = true;
+      salvarEstado();
+
+      document.getElementById("authSection").classList.add("hidden");
+      document.getElementById("authDiag").textContent = "Entrou com sucesso como " + emailFinal;
+      atualizarCabecalho();
+      renderTudo();
+      abrirTela("menuSection");
+    }
+
+    function sairDoApp() {
+      estado.logado = false;
+      salvarEstado();
+      ["viewAddAluno", "viewTodosAlunos", "viewRelatorio", "viewFestas", "viewGraduacao", "viewFinanceiro"].forEach((id) => {
+        document.getElementById(id).classList.add("hidden");
+      });
+      document.getElementById("menuSection").classList.add("hidden");
+      document.getElementById("authSection").classList.remove("hidden");
+      atualizarCabecalho();
+      atualizarTelaLogin();
+    }
+
+    function abrirTela(id) {
+      ["menuSection", "viewAddAluno", "viewTodosAlunos", "viewRelatorio", "viewFestas", "viewGraduacao", "viewFinanceiro"].forEach((sec) => {
+        document.getElementById(sec).classList.toggle("hidden", sec !== id);
+      });
+      renderTudo();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function limparFone(fone) {
+      let d = (fone || "").replace(/\D/g, "");
+      if (d.length === 10 || d.length === 11) d = "55" + d;
+      return d;
+    }
+
+    function buscarTelefoneAluno(nome) {
+      const alvo = (nome || "").trim().toLowerCase();
+      if (!alvo) return "";
+      const achado = estado.alunos.find((a) => (a.nome || "").trim().toLowerCase() === alvo);
+      return achado ? (achado.whatsapp || "") : "";
+    }
+
+    function autoPreencherTelefoneFesta() {
+      const campoWa = document.getElementById("festaWhatsapp");
+      if (campoWa.value.trim()) return;
+      const nome = document.getElementById("festaParticipante").value;
+      const fone = buscarTelefoneAluno(nome);
+      if (fone) campoWa.value = fone;
+    }
+
+    function cobrarWhatsApp(nome, fone, motivo) {
+      const chaveAtiva = (estado.pix || "").trim();
+      const pixTexto = chaveAtiva ? `\nChave Pix: ${chaveAtiva}` : "";
+      const msg = `Olá ${nome}! Passando para lembrar sobre ${motivo}.${pixTexto}`;
+      const num = limparFone(fone || buscarTelefoneAluno(nome));
+      const url = num ? `https://wa.me/${num}?text=${encodeURIComponent(msg)}` : `https://wa.me/?text=${encodeURIComponent(msg)}`;
+      window.open(url, "_blank", "noopener");
+    }
+
+    function salvarPix(mostrarConfirmacao) {
+      const inputEl = document.getElementById("pixChaveInput");
+      estado.pix = (inputEl.value || "").trim();
+      salvarEstado();
+      if (mostrarConfirmacao) {
+        const msgEl = document.getElementById("pixStatusMsg");
+        if (msgEl) {
+          msgEl.style.color = "#15803d";
+          msgEl.textContent = estado.pix
+            ? `Chave Pix "${estado.pix}" salva para o gestor!`
+            : "Chave Pix limpa. Digite a chave do gestor para salvar.";
+        }
+      }
+    }
+
+    async function copiarChavePix() {
+      const inputEl = document.getElementById("pixChaveInput");
+      const chave = (inputEl.value || estado.pix || "").trim();
+      estado.pix = chave;
+      salvarEstado();
+
+      const msgEl = document.getElementById("pixStatusMsg");
+      if (!chave) {
+        if (msgEl) {
+          msgEl.style.color = "#b91c1c";
+          msgEl.textContent = "Digite ou cole a chave Pix do gestor primeiro.";
+        }
+        return;
+      }
+
+      let copiado = false;
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(chave);
+          copiado = true;
+        }
+      } catch (_) {}
+
+      if (!copiado) {
+        try {
+          inputEl.focus();
+          inputEl.select();
+          copiado = document.execCommand("copy");
+        } catch (_) {}
+      }
+
+      if (msgEl) {
+        msgEl.style.color = "#15803d";
+        msgEl.textContent = copiado
+          ? `Chave Pix "${chave}" salva e copiada!`
+          : `Chave Pix "${chave}" salva!`;
+      }
+    }
+
+    function setFiltroRel(filtro) {
+      filtroRelatorio = filtro;
+      renderRelatorio();
+    }
+
+    function calcularMes(mes) {
+      const alvo = mes || document.getElementById("mesFiltro").value || mesAtualISO();
+      const itens = estado.lancamentos.filter((l) => (l.data || "").slice(0, 7) === alvo);
+      const entradas = itens.filter((l) => l.tipo === "entrada").reduce((s, x) => s + (Number(x.valor) || 0), 0);
+      const despesas = itens.filter((l) => l.tipo === "despesa").reduce((s, x) => s + (Number(x.valor) || 0), 0);
+      return { alvo, itens, entradas, despesas, lucro: entradas - despesas };
+    }
+
+    function salvarAluno() {
+      const nome = (document.getElementById("alunoNome").value || "").trim();
+      const msgEl = document.getElementById("alunoMsg");
+      if (!nome) {
+        msgEl.style.color = "#b91c1c";
+        msgEl.textContent = "Digite o nome do aluno.";
+        return;
+      }
+
+      estado.alunos.push({
+        id: "al_" + Date.now(),
+        nome,
+        whatsapp: (document.getElementById("alunoWhatsapp").value || "").trim(),
+        endereco: (document.getElementById("alunoEndereco").value || "").trim(),
+        cep: (document.getElementById("alunoCep").value || "").trim(),
+        peso: (document.getElementById("alunoPeso").value || "").trim(),
+        status: document.getElementById("alunoStatus").value
+      });
+      salvarEstado();
+
+      ["alunoNome", "alunoWhatsapp", "alunoEndereco", "alunoCep", "alunoPeso"].forEach((id) => {
+        document.getElementById(id).value = "";
+      });
+      msgEl.style.color = "#15803d";
+      msgEl.textContent = "Aluno salvo!";
+      renderTudo();
+    }
+
+    function alternarStatus(lista, id) {
+      const item = estado[lista].find((x) => x.id === id);
+      if (!item) return;
+      item.status = item.status === "pago" ? "nao_pago" : "pago";
+      salvarEstado();
+      renderTudo();
+    }
+
+    function excluirItem(lista, id) {
+      estado[lista] = estado[lista].filter((x) => x.id !== id);
+      salvarEstado();
+      renderTudo();
+    }
+
+    function salvarFesta() {
+      const participante = (document.getElementById("festaParticipante").value || "").trim();
+      const msgEl = document.getElementById("festaMsg");
+      if (!participante) {
+        msgEl.style.color = "#b91c1c";
+        msgEl.textContent = "Digite o nome do participante.";
+        return;
+      }
+
+      const waInformado = (document.getElementById("festaWhatsapp").value || "").trim() || buscarTelefoneAluno(participante);
+
+      estado.festas.push({
+        id: "fe_" + Date.now(),
+        evento: (document.getElementById("festaEvento").value || "").trim() || "Evento",
+        participante,
+        whatsapp: waInformado,
+        status: document.getElementById("festaStatus").value
+      });
+      salvarEstado();
+
+      document.getElementById("festaParticipante").value = "";
+      document.getElementById("festaWhatsapp").value = "";
+      msgEl.style.color = "#15803d";
+      msgEl.textContent = "Participante salvo!";
+      renderTudo();
+    }
+
+    function salvarGraduacao() {
+      const aluno = (document.getElementById("gradAluno").value || "").trim();
+      const msgEl = document.getElementById("gradMsg");
+      if (!aluno) {
+        msgEl.style.color = "#b91c1c";
+        msgEl.textContent = "Digite o nome do aluno.";
+        return;
+      }
+
+      estado.graduacao.push({
+        id: "gr_" + Date.now(),
+        aluno,
+        faixa: (document.getElementById("gradFaixa").value || "").trim() || "Próxima etapa",
+        status: document.getElementById("gradStatus").value
+      });
+      salvarEstado();
+
+      document.getElementById("gradAluno").value = "";
+      document.getElementById("gradFaixa").value = "";
+      msgEl.style.color = "#15803d";
+      msgEl.textContent = "Salvo na graduação!";
+      renderTudo();
+    }
+
+    function salvarLancamento() {
+      const tipo = document.getElementById("lancTipo").value;
+      const data = document.getElementById("lancData").value || hojeISO();
+      const desc = (document.getElementById("lancDesc").value || "").trim() || (tipo === "entrada" ? "Entrada" : "Despesa");
+      const valor = parseFloat(document.getElementById("lancValor").value);
+      const msgEl = document.getElementById("lancMsg");
+
+      if (!Number.isFinite(valor) || valor <= 0) {
+        msgEl.style.color = "#b91c1c";
+        msgEl.textContent = "Informe um valor maior que zero.";
+        return;
+      }
+
+      estado.lancamentos.push({
+        id: "la_" + Date.now(),
+        tipo,
+        data,
+        desc,
+        valor
+      });
+      document.getElementById("mesFiltro").value = data.slice(0, 7);
+      salvarEstado();
+
+      document.getElementById("lancDesc").value = "";
+      document.getElementById("lancValor").value = "";
+      msgEl.style.color = "#15803d";
+      msgEl.textContent = "Lançamento salvo e sincronizado!";
+      renderTudo();
+    }
+
+    function renderResumo() {
+      const total = estado.alunos.length;
+      const pagos = estado.alunos.filter((a) => a.status === "pago").length;
+      document.getElementById("sumTotalAlunos").textContent = String(total);
+      document.getElementById("sumPagos").textContent = String(pagos);
+      document.getElementById("sumNaoPagos").textContent = String(total - pagos);
+      document.getElementById("countMenuAlunos").textContent = String(total);
+      document.getElementById("totalAlunosTitulo").textContent = String(total);
+      const pixInput = document.getElementById("pixChaveInput");
+      if (pixInput && document.activeElement !== pixInput) {
+        pixInput.value = estado.pix || "";
+      }
+    }
+
+    function renderAlunos() {
+      const el = document.getElementById("listaTodosAlunos");
+      if (!estado.alunos.length) {
+        el.innerHTML = `<p class="desc">Nenhum aluno cadastrado ainda.</p>`;
+        return;
+      }
+
+      el.innerHTML = estado.alunos.map((a) => {
+        const pago = a.status === "pago";
+        return `
+          <div class="list-card">
+            <div class="list-top">
+              <div class="list-title">${a.nome}</div>
+              <button type="button" class="status-pill-btn ${pago ? "pill-green" : "pill-red"}" onclick="alternarStatus('alunos','${a.id}')">
+                ${pago ? "Pago" : "Não Pago"}
+              </button>
+            </div>
+            <div class="list-meta">
+              WA: ${a.whatsapp || "-"} • Peso: ${a.peso || "-"} • CEP: ${a.cep || "-"}<br/>
+              Endereço: ${a.endereco || "-"}
+            </div>
+            <div class="list-actions">
+              <button type="button" class="btn-wa btn-sm" onclick="cobrarWhatsApp('${a.nome.replaceAll("'", "")}','${a.whatsapp}','a mensalidade da academia')">WhatsApp</button>
+              <button type="button" class="btn-close-x btn-sm" onclick="excluirItem('alunos','${a.id}')">Excluir</button>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderRelatorio() {
+      const total = estado.alunos.length;
+      const pagos = estado.alunos.filter((a) => a.status === "pago").length;
+      const pendentes = total - pagos;
+      const fin = calcularMes();
+
+      document.getElementById("relQtdTotal").textContent = String(total);
+      document.getElementById("relQtdPagos").textContent = String(pagos);
+      document.getElementById("relQtdPendentes").textContent = String(pendentes);
+      document.getElementById("relMesLabel").textContent = fin.alvo;
+
+      const lucroEl = document.getElementById("relLucroMes");
+      lucroEl.textContent = formatBRL(fin.lucro);
+      lucroEl.style.color = fin.lucro < 0 ? "#b91c1c" : "#15803d";
+
+      let lista = estado.alunos;
+      if (filtroRelatorio === "pago") lista = estado.alunos.filter((a) => a.status === "pago");
+      if (filtroRelatorio === "nao_pago") lista = estado.alunos.filter((a) => a.status !== "pago");
+
+      const el = document.getElementById("listaRelatorio");
+      if (!lista.length) {
+        el.innerHTML = `<p class="desc">Nenhum aluno neste filtro.</p>`;
+        return;
+      }
+
+      el.innerHTML = lista.map((a) => {
+        const pago = a.status === "pago";
+        return `
+          <div class="list-card">
+            <div class="list-top">
+              <div>
+                <div class="list-title">${a.nome}</div>
+                <div class="list-meta">WA: ${a.whatsapp || "Sem número"}</div>
+              </div>
+              <div style="display:flex; gap:6px; align-items:center;">
+                <button type="button" class="status-pill-btn ${pago ? "pill-green" : "pill-red"}" onclick="alternarStatus('alunos','${a.id}')">
+                  ${pago ? "Pago" : "Não Pago"}
+                </button>
+                <button type="button" class="btn-wa btn-sm" onclick="cobrarWhatsApp('${a.nome.replaceAll("'", "")}','${a.whatsapp}','a mensalidade da academia')">Cobrar</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderFestas() {
+      const el = document.getElementById("listaFesta");
+      if (!estado.festas.length) {
+        el.innerHTML = `<p class="desc">Nenhum participante adicionado.</p>`;
+        return;
+      }
+
+      el.innerHTML = estado.festas.map((f) => {
+        const pago = f.status === "pago";
+        return `
+          <div class="list-card">
+            <div class="list-top">
+              <div class="list-title">${f.participante}</div>
+              <button type="button" class="status-pill-btn ${pago ? "pill-green" : "pill-red"}" onclick="alternarStatus('festas','${f.id}')">
+                ${pago ? "Pago" : "Não Pago"}
+              </button>
+            </div>
+            <div class="list-meta">Evento: ${f.evento} • WA: ${f.whatsapp || "-"}</div>
+            <div class="list-actions">
+              <button type="button" class="btn-wa btn-sm" onclick="cobrarWhatsApp('${f.participante.replaceAll("'", "")}','${f.whatsapp}','o evento ${f.evento.replaceAll("'", "")}')">Cobrar Pix / WA</button>
+              <button type="button" class="btn-close-x btn-sm" onclick="excluirItem('festas','${f.id}')">Excluir</button>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderGraduacao() {
+      const el = document.getElementById("listaGraduacao");
+      if (!estado.graduacao.length) {
+        el.innerHTML = `<p class="desc">Nenhum aluno na graduação.</p>`;
+        return;
+      }
+
+      el.innerHTML = estado.graduacao.map((g) => {
+        const pago = g.status === "pago";
+        return `
+          <div class="list-card">
+            <div class="list-top">
+              <div class="list-title">${g.aluno}</div>
+              <button type="button" class="status-pill-btn ${pago ? "pill-green" : "pill-red"}" onclick="alternarStatus('graduacao','${g.id}')">
+                ${pago ? "Pago" : "Não Pago"}
+              </button>
+            </div>
+            <div class="list-meta">Vai para: ${g.faixa}</div>
+            <div class="list-actions">
+              <button type="button" class="btn-wa btn-sm" onclick="cobrarWhatsApp('${g.aluno.replaceAll("'", "")}','','a graduação (${g.faixa.replaceAll("'", "")})')">Cobrar Pix / WA</button>
+              <button type="button" class="btn-close-x btn-sm" onclick="excluirItem('graduacao','${g.id}')">Excluir</button>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderFinanceiro() {
+      const fin = calcularMes();
+      document.getElementById("finEntradas").textContent = formatBRL(fin.entradas);
+      document.getElementById("finDespesas").textContent = formatBRL(fin.despesas);
+      const lucroEl = document.getElementById("finLucro");
+      lucroEl.textContent = formatBRL(fin.lucro);
+      lucroEl.style.color = fin.lucro < 0 ? "#b91c1c" : "#15803d";
+
+      const listaEl = document.getElementById("listaLancamentos");
+      if (!fin.itens.length) {
+        listaEl.innerHTML = `<p class="desc">Sem lançamentos neste mês.</p>`;
+        return;
+      }
+
+      listaEl.innerHTML = fin.itens.map((l) => `
+        <div class="list-card">
+          <div class="list-top">
+            <div>
+              <div class="list-title">${l.desc}</div>
+              <div class="list-meta">${l.data} • ${l.tipo === "entrada" ? "Entrada" : "Despesa"} • <strong>${formatBRL(l.valor)}</strong></div>
+            </div>
+            <button type="button" class="btn-close-x btn-sm" onclick="excluirItem('lancamentos','${l.id}')">Excluir</button>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function baixarCsv() {
+      const fin = calcularMes();
+      const linhas = ["Data;Tipo;Descricao;Valor"];
+      fin.itens.forEach((l) => {
+        linhas.push(`${l.data};${l.tipo};"${(l.desc || "").replaceAll('"', '""')}";${String(l.valor || 0).replace(".", ",")}`);
+      });
+      const blob = new Blob(["\uFEFF" + linhas.join("\n")], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `32-academia-${fin.alvo}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    function enviarResumoWhatsApp() {
+      const fin = calcularMes();
+      const chaveAtiva = (estado.pix || "").trim();
+      const pixLine = chaveAtiva ? `\nPix: ${chaveAtiva}` : "";
+      const texto = `${estado.nomeAcademia} — ${fin.alvo}\nEntradas: ${formatBRL(fin.entradas)}\nDespesas: ${formatBRL(fin.despesas)}\nLucro: ${formatBRL(fin.lucro)}${pixLine}`;
+      window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`, "_blank", "noopener");
+    }
+
+    function renderTudo() {
+      renderResumo();
+      renderAlunos();
+      renderRelatorio();
+      renderFestas();
+      renderGraduacao();
+      renderFinanceiro();
+    }
+
+    carregarEstado();
+    document.getElementById("lancData").value = hojeISO();
+    document.getElementById("mesFiltro").value = mesAtualISO();
+    document.getElementById("pixChaveInput").value = estado.pix || "";
+    atualizarCabecalho();
+    atualizarTelaLogin();
+    renderTudo();
+
+    if (estado.logado) {
+      document.getElementById("authSection").classList.add("hidden");
+      abrirTela("menuSection");
+    }
+  </script>
+</body>
+</html>
