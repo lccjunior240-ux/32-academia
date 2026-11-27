@@ -26,7 +26,6 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
     body { background: var(--bg); color: var(--ink); min-height: 100vh; padding-bottom: 36px; }
 
-    /* CABEÇALHO AZUL-MARINHO COM EMBLEMA 32 ACADEMIA */
     header {
       background: linear-gradient(180deg, var(--navy-2) 0%, var(--navy) 100%);
       border-bottom: 2px solid var(--border);
@@ -196,7 +195,6 @@
     .pill-red { background: var(--red-dark); }
     .pill-red:hover { background: var(--red); }
 
-    /* BOTÕES DO MENU: FUNDO BRANCO E BORDA PRETA */
     .menu-grid {
       display: grid;
       grid-template-columns: 1fr;
@@ -254,6 +252,15 @@
     .check-row { display: flex; align-items: center; gap: 10px; flex: 1; }
     .big-check { width: 22px; height: 22px; accent-color: var(--ink); cursor: pointer; flex-shrink: 0; }
 
+    .saved-box {
+      background: #f8fafc;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+    .saved-email { font-size: 13px; font-weight: 800; color: var(--ink); margin-bottom: 8px; word-break: break-all; }
+
     .mt-2 { margin-top: 8px; }
     .hidden { display: none !important; }
     .status-msg { margin-top: 10px; font-size: 13px; color: var(--red-dark); font-weight: 700; min-height: 18px; }
@@ -286,27 +293,30 @@
   </header>
 
   <main class="container">
-    <!-- TELA DE LOGIN -->
+    <!-- TELA DE LOGIN SIMPLIFICADA -->
     <section id="authSection" class="card">
-      <h2>Entrar ou Criar Conta</h2>
-      <p class="desc">Entre com seu e-mail e senha salvos no navegador para abrir os botões do sistema.</p>
+      <h2>Entrar no Aplicativo</h2>
+      <p class="desc">Seu e-mail e senha ficam guardados neste aparelho para facilitar o acesso.</p>
 
-      <form id="authForm">
-        <label for="nomeAcademia">Nome da Academia (para conta nova)</label>
-        <input id="nomeAcademia" type="text" placeholder="Ex.: Academia da Natália" />
+      <div id="savedAccountBox" class="saved-box hidden mt-2">
+        <div class="saved-email" id="savedEmailLabel">Conta salva: ---</div>
+        <button id="btnEntrarRapido" class="btn-primary" style="margin-top:0;" type="button">Entrar com Conta Salva</button>
+      </div>
 
-        <label for="emailInput">E-mail</label>
-        <input id="emailInput" name="email" type="email" placeholder="seuemail@exemplo.com" autocomplete="username" required />
+      <label for="nomeAcademia">Nome da Academia (opcional)</label>
+      <input id="nomeAcademia" type="text" placeholder="Ex.: 32 Academia" autocomplete="organization" />
 
-        <label for="senhaInput">Senha (mínimo 6 caracteres)</label>
-        <input id="senhaInput" name="password" type="password" placeholder="••••••" autocomplete="current-password" required />
+      <label for="emailInput">E-mail</label>
+      <input id="emailInput" name="email" type="email" placeholder="seuemail@exemplo.com" autocomplete="username" />
 
-        <button id="btnLogin" class="btn-primary" type="submit">Entrar</button>
-        <button id="btnCriarConta" class="btn-secondary mt-2" type="button">Criar Conta Nova</button>
-      </form>
+      <label for="senhaInput">Senha (mínimo 6 caracteres)</label>
+      <input id="senhaInput" name="password" type="password" placeholder="••••••" autocomplete="current-password" />
+
+      <button id="btnLogin" class="btn-primary" type="button">Entrar</button>
+      <button id="btnCriarConta" class="btn-secondary mt-2" type="button">Criar Conta Nova</button>
 
       <div id="authMsg" class="status-msg"></div>
-      <div id="authDiag" class="diag-box">Status: aguardando entrar ou criar conta.</div>
+      <div id="authDiag" class="diag-box">Status: pronto para entrar.</div>
     </section>
 
     <!-- MENU PRINCIPAL COM OS BOTÕES -->
@@ -424,4 +434,161 @@
       </div>
 
       <p class="desc" style="margin-bottom:10px;">
-        Toque no botão verde ou vermelho ao lado do nome para mudar entre <strong>Pago</strong> e 
+        Toque no botão verde ou vermelho ao lado do nome para mudar entre <strong>Pago</strong> e <strong>Não Pago</strong>.
+      </p>
+
+      <div id="listaTodosAlunos"></div>
+
+      <button type="button" class="btn-exit-bottom" data-back="menuSection">Sair / Voltar aos Botões</button>
+    </section>
+
+    <!-- 3. BOTÃO RELATÓRIO E COBRANÇA -->
+    <section id="viewRelatorio" class="card hidden">
+      <div class="section-header">
+        <h2>Relatório e Cobrança</h2>
+        <button type="button" class="btn-close-x" data-back="menuSection">✕ Sair</button>
+      </div>
+
+      <div class="toolbar">
+        <button type="button" id="filtroTodos" class="btn-close-x btn-sm">Todos (<span id="relTotal">0</span>)</button>
+        <button type="button" id="filtroNaoPagos" class="btn-sm pill-red">Não Pagos (<span id="relNaoPagos">0</span>)</button>
+        <button type="button" id="filtroPagos" class="btn-sm pill-green">Pagos (<span id="relPagos">0</span>)</button>
+      </div>
+
+      <label for="msgCobranca">Mensagem de Cobrança (WhatsApp)</label>
+      <textarea id="msgCobranca">Olá {nome}! Tudo bem? Passando para lembrar da mensalidade da academia que está em aberto.</textarea>
+
+      <div class="toolbar">
+        <button type="button" id="btnMarcarNaoPagos" class="btn-close-x btn-sm">Marcar Todos Não Pagos</button>
+        <button type="button" id="btnMarcarTodosRel" class="btn-close-x btn-sm">Marcar Todos</button>
+        <button type="button" id="btnLimparMarcacaoRel" class="btn-close-x btn-sm">Desmarcar</button>
+      </div>
+
+      <button type="button" id="btnDispararWhatsAppRel" class="btn-wa" style="width:100%; margin-bottom:12px;">
+        Enviar WhatsApp para Selecionados (<span id="qtdMarcadosRel">0</span>)
+      </button>
+
+      <div id="listaRelatorio"></div>
+
+      <button type="button" class="btn-exit-bottom" data-back="menuSection">Sair / Voltar aos Botões</button>
+    </section>
+
+    <!-- 4. BOTÃO FESTAS / OUTROS ASSUNTOS -->
+    <section id="viewFestas" class="card hidden">
+      <div class="section-header">
+        <h2>Festas e Eventos</h2>
+        <button type="button" class="btn-close-x" data-back="menuSection">✕ Sair</button>
+      </div>
+
+      <label for="festaNomeEvento">Nome da Festa / Evento</label>
+      <input id="festaNomeEvento" type="text" placeholder="Ex.: Aniversário da Academia / Confraternização" />
+
+      <div class="row-2">
+        <div>
+          <label for="festaParticipante">Nome do Participante</label>
+          <input id="festaParticipante" type="text" placeholder="Nome de quem vai" />
+        </div>
+        <div>
+          <label for="festaStatus">Situação</label>
+          <select id="festaStatus">
+            <option value="nao_pago">Não Pago (Vermelho)</option>
+            <option value="pago">Pago (Verde)</option>
+          </select>
+        </div>
+      </div>
+
+      <button id="btnAddFesta" class="btn-primary" type="button">Adicionar na Lista da Festa</button>
+      <div id="festaMsg" class="status-msg"></div>
+
+      <h3 style="margin-top:16px;">Lista de Participantes (<span id="totalFesta">0</span>)</h3>
+      <div id="listaFesta"></div>
+
+      <button type="button" class="btn-exit-bottom" data-back="menuSection">Sair / Voltar aos Botões</button>
+    </section>
+
+    <!-- 5. BOTÃO GRADUAÇÃO -->
+    <section id="viewGraduacao" class="card hidden">
+      <div class="section-header">
+        <h2>Graduação</h2>
+        <button type="button" class="btn-close-x" data-back="menuSection">✕ Sair</button>
+      </div>
+
+      <label for="gradAlunoNome">Nome do Aluno</label>
+      <input id="gradAlunoNome" type="text" placeholder="Ex.: Junior Costa" />
+
+      <div class="row-2">
+        <div>
+          <label for="gradFaixaDestino">Vai Graduar Para</label>
+          <input id="gradFaixaDestino" type="text" placeholder="Ex.: Verde / Roxa / Grau" />
+        </div>
+        <div>
+          <label for="gradStatus">Situação</label>
+          <select id="gradStatus">
+            <option value="nao_pago">Não Pago (Vermelho)</option>
+            <option value="pago">Pago (Verde)</option>
+          </select>
+        </div>
+      </div>
+
+      <button id="btnAddGraduacao" class="btn-primary" type="button">Graduar / Salvar na Lista</button>
+      <div id="gradMsg" class="status-msg"></div>
+
+      <h3 style="margin-top:16px;">Lista de Graduação (<span id="totalGrad">0</span>)</h3>
+      <div id="listaGraduacao"></div>
+
+      <button type="button" class="btn-exit-bottom" data-back="menuSection">Sair / Voltar aos Botões</button>
+    </section>
+  </main>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getAuth,
+      createUserWithEmailAndPassword,
+      signInWithEmailAndPassword,
+      signOut,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import {
+      getDatabase,
+      ref,
+      set,
+      push,
+      update,
+      remove,
+      onValue
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBz0Qaz1pmCoXf2NfvaeYfPmBk7d855M40",
+      authDomain: "academia-1108d.firebaseapp.com",
+      databaseURL: "https://academia-1108d-default-rtdb.firebaseio.com",
+      projectId: "academia-1108d",
+      storageBucket: "academia-1108d.firebasestorage.app",
+      messagingSenderId: "339069724218",
+      appId: "1:339069724218:web:10b6358f19c52479b0f703"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getDatabase(app);
+
+    const STORAGE_KEY = "academia32_cred_v1";
+
+    const authSection = document.getElementById("authSection");
+    const menuSection = document.getElementById("menuSection");
+    const btnLogout = document.getElementById("btnLogout");
+    const headerTitle = document.getElementById("headerTitle");
+    const headerUser = document.getElementById("headerUser");
+    const authMsg = document.getElementById("authMsg");
+    const authDiag = document.getElementById("authDiag");
+
+    const nomeAcademiaEl = document.getElementById("nomeAcademia");
+    const emailEl = document.getElementById("emailInput");
+    const senhaEl = document.getElementById("senhaInput");
+    const savedAccountBox = document.getElementById("savedAccountBox");
+    const savedEmailLabel = document.getElementById("savedEmailLabel");
+
+    const subViews = ["viewAddAluno", "viewTodosAlunos", "viewRelatorio", "viewFestas", "viewGraduacao"];
+
+    let currentUser = null;
